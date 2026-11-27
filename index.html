@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hemanth’s Gaming Study Store</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f2f4ff;color:#202944}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer;border:0;border-radius:9px;padding:10px 15px;background:#6254df;color:white;font-weight:600}
+button:hover{filter:brightness(.94)}
+input,textarea,select{padding:11px;border:1px solid #d6d9e8;border-radius:8px;width:100%;margin:5px 0 12px;background:white;color:#202944}
+textarea{min-height:90px;resize:vertical}
+h1,h2,h3{margin-top:0}
+.small{font-size:13px;color:#737b91}
+.hidden{display:none!important}
+header{background:#171b32;color:white;padding:15px 22px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+header h2{margin:0}
+header h2 .brand-hemanth{background:linear-gradient(90deg,#fff,#67e8f9,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 22px #8b5cf677}
+header button{background:#e65c88}
+.layout{display:block;min-height:calc(100vh - 60px);width:100%}
+aside{width:220px;background:#222744;padding:18px 12px;color:white;flex-shrink:0}
+aside button{display:block;width:100%;text-align:left;background:transparent;margin:4px 0;color:#e5e5ff}
+aside button.active,aside button:hover{background:#5148a6}
+main{padding:24px;width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+.page{display:none}
+.page.active{display:block}
+/* Full-screen learning sections */
+.page.section-fullscreen{position:fixed;inset:0;z-index:10000;width:100vw;height:100vh;max-width:none!important;margin:0;padding:22px 26px!important;overflow-y:auto;overflow-x:hidden;background:#f2f4ff}
+.page.section-fullscreen>.section-back-button{position:sticky;top:0;z-index:3}
+#subjects.section-fullscreen #subjectDetail{width:100%;max-width:none}
+/* Topic notes open as a full-screen notepad */
+.topic-notepad{position:fixed;inset:0;z-index:10002;display:flex;flex-direction:column;gap:12px;padding:24px;background:#f7f8ff;overflow:auto;border:0;border-radius:0;box-shadow:0 0 0 200vmax #15152b}
+.topic-notepad h3{margin:0;font-size:24px}
+.topic-notepad>p{margin:0}
+.topic-notepad textarea{flex:1;width:100%;min-height:55vh;resize:vertical;font-size:16px;line-height:1.7;padding:18px}
+@media(max-width:700px){.page.section-fullscreen{padding:14px!important}.topic-notepad{padding:16px}.topic-notepad h3{font-size:20px}}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:18px 0}
+.card,.panel{background:white;padding:18px;border-radius:13px;box-shadow:0 3px 14px #26315c0c;margin-bottom:15px}
+.card strong{font-size:27px;color:#5546c8;display:block}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:130px}
+.item{background:white;border:1px solid #e4e5f0;border-radius:10px;padding:13px;margin:9px 0}
+.item button{margin:3px}
+.secondary{background:#e9e8ff;color:#4336a7}
+.danger{background:#d94d62}
+.success{background:#168b65}
+.list{padding-left:20px}
+table{width:100%;border-collapse:collapse;background:white}
+th,td{padding:10px;border-bottom:1px solid #e5e6ef;text-align:left}
+#output{background:#fff;color:#222;padding:15px;border-radius:8px;min-height:90px;overflow:auto}
+#codeTabs button{background:#343b59}
+#codeTabs button.active{background:#6756dc}
+.progress{height:9px;background:#e6e6f3;border-radius:10px;overflow:hidden}
+.progress span{height:100%;display:block;background:#6655df}
+
+/* INTERVIEW SIMULATOR */
+.interview-hero{background:linear-gradient(120deg,#312e81,#6954df,#a855c8);color:white;padding:24px;border-radius:16px;margin:14px 0}
+.interview-hero h2{margin:0 0 8px}.interview-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:14px 0}
+.interview-stat{background:#fff;padding:16px;border-radius:12px;box-shadow:0 3px 14px #26315c0c}
+.interview-stat strong{display:block;font-size:25px;color:#5546c8}
+.interview-question{font-size:19px;font-weight:700;line-height:1.5;margin:12px 0}
+.interview-answer{min-height:150px!important;line-height:2;background:repeating-linear-gradient(to bottom,#fff 0,#fff 31px,#dfe3f2 32px)!important}
+.interview-feedback{padding:14px;border-radius:10px;background:#f0efff;margin-top:12px;line-height:1.6}
+.interview-chip{display:inline-block;padding:6px 10px;border-radius:20px;background:#eceaff;color:#4537a7;margin:3px;font-size:13px}
+/* Interview answer color feedback */
+#interviewAnswer{transition:background .2s,border-color .2s,box-shadow .2s}
+#interviewAnswer.answer-started{background:#eff6ff!important;border:2px solid #3b82f6!important;box-shadow:0 0 0 3px #3b82f622!important;color:#172554!important}
+#interviewAnswer.answer-ready{background:#ecfdf5!important;border:2px solid #10b981!important;box-shadow:0 0 0 3px #10b98122!important;color:#064e3b!important}
+.interview-feedback.feedback-strong{background:#dcfce7!important;border:1px solid #22c55e!important;color:#14532d!important}
+.interview-feedback.feedback-mid{background:#fef3c7!important;border:1px solid #f59e0b!important;color:#78350f!important}
+.interview-feedback.feedback-low{background:#fee2e2!important;border:1px solid #ef4444!important;color:#7f1d1d!important}
+.interview-feedback.feedback-sample{background:#dbeafe!important;border:1px solid #60a5fa!important;color:#1e3a8a!important}
+body:not(.normal-theme) #interviewAnswer.answer-started{background:#172b4d!important;color:#eaf2ff!important}
+body:not(.normal-theme) #interviewAnswer.answer-ready{background:#123b35!important;color:#eafff7!important}
+body:not(.normal-theme) .interview-feedback.feedback-strong{background:#123b2b!important;color:#dcfce7!important}
+body:not(.normal-theme) .interview-feedback.feedback-mid{background:#493817!important;color:#fef3c7!important}
+body:not(.normal-theme) .interview-feedback.feedback-low{background:#4a2028!important;color:#fee2e2!important}
+body:not(.normal-theme) .interview-feedback.feedback-sample{background:#172b4d!important;color:#dbeafe!important}
+
+
+@media(max-width:700px){.layout{display:block}aside{width:100%;display:flex;overflow-x:auto;padding:8px}aside button{min-width:max-content;width:auto}main{padding:14px}}
+
+/* CHATGPT-STYLE STUDY ASSISTANT */
+.chat-layout{display:flex;flex-direction:column;height:min(70vh,720px);min-height:440px;border:1px solid #e3e5f1;border-radius:16px;overflow:hidden;background:#fff}
+.chat-top{padding:14px 18px;background:#242744;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.chat-top h3{margin:0}.chat-top small{color:#d7d9ef}
+.chat-messages{flex:1;overflow-y:auto;padding:18px;background:#f7f8fd}
+.chat-message{display:flex;gap:10px;margin:0 0 16px;align-items:flex-start}
+.chat-message.user{flex-direction:row-reverse}
+.chat-avatar{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;background:#6254df;color:white;font-weight:700}
+.chat-message.user .chat-avatar{background:#168b65}
+.chat-bubble{max-width:min(82%,680px);padding:12px 15px;border-radius:14px;background:#111111;color:#ffffff;box-shadow:0 2px 8px #26315c12;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.chat-message.assistant .chat-bubble{background:#111111;color:#ffffff}
+.chat-message.user .chat-bubble{background:#168b45;color:#ffffff}
+.chat-prompts{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;background:#fff;border-top:1px solid #eee}
+.chat-prompts button{background:#f0efff;color:#4436a5;font-size:13px;padding:8px 10px}
+.chat-compose{display:flex;gap:10px;padding:12px;background:#fff;border-top:1px solid #eee;align-items:flex-end}
+.chat-compose textarea{margin:0;min-height:48px;max-height:120px;resize:vertical}
+.chat-compose button{min-width:82px;height:48px}
+.chat-disclaimer{font-size:12px;color:#737b91;text-align:center;padding:8px;background:#fff}
+@media(max-width:600px){.chat-layout{height:68vh;min-height:400px}.chat-bubble{max-width:88%}.chat-compose{gap:6px}.chat-compose button{min-width:65px}}
+
+
+/* VS CODE-INSPIRED EDITOR UPGRADE */
+#editor.page.active{max-width:none}
+#codeEditorShell{padding:0!important;overflow:hidden;border:1px solid #30364c;border-radius:12px;background:#171a26;color:#dce3f3;box-shadow:0 12px 35px #11182725}
+.vscode-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;background:#252a3a;border-bottom:1px solid #353b50;flex-wrap:wrap}
+.vscode-toolbar .toolbar-left,.vscode-toolbar .toolbar-right{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.vscode-toolbar button{padding:7px 10px;font-size:12px;background:#3b4260}
+.vscode-toolbar button.primary{background:#6655df}
+.vscode-workspace{display:grid;grid-template-columns:48px 190px minmax(0,1fr);min-height:540px}
+.vscode-activity{background:#202433;border-right:1px solid #34394d;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:18px;color:#aeb8ce;font-size:20px}
+.vscode-activity span{cursor:pointer;padding:6px;border-left:2px solid transparent}
+.vscode-activity span:first-child{border-left-color:#9b8cff;color:white}
+.vscode-explorer{background:#202433;border-right:1px solid #34394d;padding:12px 10px;color:#c5cce0;font-size:13px}
+.vscode-explorer h4{font-size:11px;letter-spacing:1px;margin:0 0 14px;color:#aab3c9}
+.vscode-file{padding:9px 8px;border-radius:5px;cursor:pointer;margin:3px 0}
+.vscode-file.active,.vscode-file:hover{background:#343b55;color:white}
+.vscode-main{min-width:0;display:flex;flex-direction:column;background:#171a26}
+.vscode-tabs{display:flex;background:#202433;border-bottom:1px solid #34394d;overflow:auto}
+.vscode-tab{padding:11px 15px;border-right:1px solid #34394d;color:#aeb8ce;white-space:nowrap;cursor:pointer;font-size:13px}
+.vscode-tab.active{background:#171a26;color:#fff;border-top:2px solid #9b8cff}
+.vscode-editor-heading{padding:8px 14px;color:#aab3c9;font-size:12px;border-bottom:1px solid #2c3245}
+.vscode-editor-split{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,0.85fr);flex:1;min-height:340px;min-width:0}.vscode-code-area{display:grid;grid-template-columns:44px minmax(0,1fr);min-height:340px;min-width:0;overflow:hidden}
+#codeLineNumbers{margin:0;padding:12px 10px 12px 0;text-align:right;color:#626d86;background:#171a26;font:13px/1.65 Consolas,monospace;white-space:pre;overflow:hidden;user-select:none}
+#codeInput{margin:0!important;border:0!important;border-radius:0!important;outline:none;resize:none;min-height:300px!important;height:100%;width:100%;padding:12px 14px!important;background:#171a26!important;color:#dce3f3!important;font:13px/1.65 Consolas,Monaco,monospace!important;tab-size:4;white-space:pre;overflow:auto}
+.vscode-status{display:flex;justify-content:space-between;gap:10px;padding:6px 12px;background:#5144b8;color:white;font-size:11px;flex-wrap:wrap}
+.vscode-output{padding:12px;background:#111522;border-left:1px solid #34394d;min-width:0;overflow:auto}
+.vscode-output h3{font-size:12px;color:#c4cbe0;margin:0 0 8px}
+#output{background:#0b1020;color:#dce3f3;border:1px solid #30364c;min-height:280px;max-height:calc(100% - 30px);white-space:pre-wrap;font:12px/1.5 Consolas,monospace;overflow:auto}
+#editor.vscode-fullscreen{position:fixed;inset:0;z-index:9999;background:#171a26;padding:10px!important;overflow:auto}
+#editor.vscode-fullscreen #codeEditorShell{height:calc(100vh - 75px)}
+#editor.vscode-fullscreen .vscode-workspace{height:calc(100% - 86px)}
+#editor.vscode-fullscreen .vscode-editor-split{min-height:0}
+#editor.vscode-fullscreen .vscode-code-area{min-height:0}
+@media(max-width:900px){.vscode-editor-split{grid-template-columns:minmax(0,1fr)}.vscode-output{border-left:0;border-top:1px solid #34394d}.vscode-output #output{min-height:120px;max-height:220px}}
+@media(max-width:760px){.vscode-workspace{grid-template-columns:38px minmax(0,1fr)}.vscode-explorer{display:none}.vscode-toolbar button{padding:7px}.vscode-workspace{min-height:480px}}
+
+/* CREATIVE QUIZ ARENA */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:12px 0}
+.grid2 label{display:block;font-weight:600;margin-bottom:6px}
+.quiz-question{border-left:4px solid #7565e8;background:linear-gradient(120deg,#fff,#f7f6ff);margin:14px 0;padding:16px}
+.quiz-question label{padding:9px 12px;border:1px solid #e5e3f7;border-radius:9px;background:#fff;cursor:pointer}
+.quiz-question label:hover{background:#efedff;border-color:#887be9}
+#quizReview .item{border-left:4px solid #21a179}
+#quizProgress,.badge{display:inline-block;border-radius:20px;padding:6px 12px;background:#efedff;color:#5143b5;font-size:13px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+
+
+/* SPELLING SKILLS */
+.sales-progress{height:10px;background:#e7e7f2;border-radius:20px;overflow:hidden}
+.sales-progress span{height:100%;display:block;background:#6254df}
+.spelling-word{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid #e3e5f1;border-radius:10px;padding:12px;margin:8px 0}
+.spelling-blank{font-size:22px;font-weight:800;letter-spacing:5px;color:#5143b5;background:#f2f0ff;border-radius:10px;padding:12px;text-align:center;margin:12px 0}
+.spelling-feedback{padding:12px;border-radius:9px;background:#f0efff;margin-top:10px;line-height:1.5}
+
+
+/* STUDY STORE — ARCADE / GAME MODE */
+.store-hero{position:relative;overflow:hidden;padding:26px;border-radius:18px;color:#fff;background:radial-gradient(circle at 85% 15%,#ffda6b55,transparent 28%),linear-gradient(125deg,#17143d,#39277d 55%,#0c7a83);box-shadow:0 14px 32px #17143d35}
+.store-hero h2{font-size:clamp(23px,4vw,34px);margin:0 0 8px;text-shadow:0 3px 12px #0005}
+.store-hero p{color:#e4e4ff;max-width:650px;line-height:1.6}
+.store-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:18px 0}
+.store-card{position:relative;overflow:hidden;min-height:205px;padding:18px;border-radius:16px;color:#f8f7ff;background:linear-gradient(145deg,#25204f,#171a35);border:1px solid #8275ff66;box-shadow:0 9px 22px #15143825}
+.store-card:before{content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-35px;top:-40px;background:#a78bfa22}
+.store-icon{font-size:35px;filter:drop-shadow(0 4px 8px #0006)}
+.store-card h3{margin:10px 0 6px;color:#fff}.store-card p{color:#c8c9e8;font-size:13px;line-height:1.5;min-height:40px}
+.store-card button{background:linear-gradient(90deg,#8b5cf6,#06b6d4);box-shadow:0 4px 12px #06b6d455}.store-card button.collected{background:#168b65}
+.store-tag{display:inline-block;padding:4px 9px;border-radius:20px;background:#ffffff18;color:#ffe28a;font-size:11px;font-weight:800;letter-spacing:.6px}
+.store-shelf{padding:16px;border:1px dashed #8b80db;border-radius:14px;background:#f4f1ff}
+.sidebar-profile{padding:14px 10px 17px;margin:0 0 12px;border-bottom:1px solid #ffffff2a;text-align:center}
+.sidebar-avatar{width:58px;height:58px;margin:0 auto 8px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,#a78bfa,#22d3ee);font-size:28px;box-shadow:0 6px 18px #0004}
+.sidebar-profile strong{display:block;font-size:17px;color:#fff}.sidebar-profile small{color:#bfc6e8}
+
+
+/* FULL WEBSITE ARCADE / GAME MODE THEME */
+body{background:radial-gradient(ellipse at 15% 0%,#30245f 0%,transparent 42%),linear-gradient(135deg,#0b1024,#151b35 58%,#102b3a);color:#eef2ff}
+header{background:linear-gradient(100deg,#17132f,#29205a 55%,#075b68);border-bottom:1px solid #7c6dff66;box-shadow:0 8px 28px #05081688}
+header h2{letter-spacing:.5px;text-shadow:0 2px 12px #8b5cf688}
+aside{background:linear-gradient(180deg,#17152f,#101a31);border-right:1px solid #6f63d855;box-shadow:8px 0 28px #05081655}
+aside button{border:1px solid transparent;border-radius:10px;transition:.18s ease}
+aside button.active,aside button:hover{background:linear-gradient(100deg,#633ee8,#087e91);border-color:#9e8cff;box-shadow:0 4px 15px #6946e855;transform:translateX(2px)}
+main{background:transparent}
+.card,.panel{background:linear-gradient(145deg,#202747,#171f39);color:#eef2ff;border:1px solid #7770c755;box-shadow:0 8px 24px #05081655}
+.card strong,.interview-stat strong{color:#8feaff}
+.small{color:#b9c4e4}
+.item{background:#202747;color:#eef2ff;border-color:#5c6391}
+input,textarea,select{background:#111a30;color:#f2f5ff;border-color:#58618b}
+input::placeholder,textarea::placeholder{color:#9ba8c8}
+table{background:#1b2440;color:#eef2ff}th,td{border-color:#3b456b}
+.progress{background:#394263}.progress span{background:linear-gradient(90deg,#9b6bff,#22d3ee)}
+.sidebar-profile{background:linear-gradient(135deg,#ffffff0a,#8b5cf622);border-radius:14px;border:1px solid #7d72d955}
+.sidebar-avatar{border:2px solid #b5a6ff;box-shadow:0 0 20px #8b5cf688}
+.interview-stat{background:#202747;color:#eef2ff;border:1px solid #7770c755}
+.interview-feedback,.quiz-question,.spelling-feedback{background:#29264d;color:#f1efff;border:1px solid #7770c755}
+.quiz-question label{background:#1c2541;color:#eef2ff;border-color:#525d88}
+.spelling-word{background:#1d2743;color:#eef2ff;border-color:#56618e}
+.store-shelf{background:#211d49;color:#f1efff;border-color:#a095ff}
+@media(max-width:700px){aside{background:#15152f;border-bottom:1px solid #7770c755}}
+
+
+
+/* SECTION VIEW: hide sidebar and provide a dashboard return path */
+.layout.section-mode main{width:100%;max-width:100%;min-width:0}
+.section-back-button{display:inline-flex;align-items:center;gap:8px;margin:0 0 20px;padding:11px 18px;border:1px solid #8e82ff;border-radius:10px;background:linear-gradient(135deg,#7045e8,#087e91);color:#fff;font-weight:700;box-shadow:0 5px 16px #17133d30}
+.section-back-button:hover{filter:brightness(1.08)}
+
+/* WELCOME PAGE QUICK NAVIGATION */
+.welcome-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:18px 0 24px}
+.welcome-tile{min-height:92px;text-align:left;display:flex;align-items:center;gap:12px;padding:17px;border-radius:14px;color:#f8f7ff;background:linear-gradient(135deg,#28204f,#172b49);border:1px solid #8174ed88;box-shadow:0 7px 18px #05081666;transition:transform .18s,box-shadow .18s;font-weight:700}
+.welcome-tile:hover{transform:translateY(-3px);box-shadow:0 12px 24px #6b55e755;filter:none}
+.welcome-tile .welcome-icon{font-size:29px;flex:0 0 36px}
+.welcome-tile .welcome-label{font-size:14px;line-height:1.35}
+.welcome-subtitle{color:#c5cbed;margin-top:-5px}
+/* STUDY STORE WELCOME HERO — fresh emerald, gold and coral palette */
+.hemanth-hero{position:relative;isolation:isolate;overflow:hidden;margin:4px 0 18px;padding:clamp(24px,4vw,44px);border-radius:26px;border:1px solid #fbbf2477;background:radial-gradient(ellipse at 88% 12%,#fb718555,transparent 32%),radial-gradient(ellipse at 8% 100%,#a3e63544,transparent 38%),linear-gradient(118deg,#102b25 0%,#164e45 46%,#3b245e 100%);box-shadow:0 18px 48px #02061799,0 0 30px #f59e0b22}
+.hemanth-hero:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.2;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:22px 22px;mask-image:linear-gradient(90deg,black,transparent)}
+.hemanth-hero:after{content:"✺";position:absolute;right:7%;top:0;font-size:clamp(100px,18vw,200px);line-height:1;color:#fde68a22;text-shadow:0 0 55px #fb923c55;transform:rotate(12deg);z-index:-1}
+.hemanth-kicker{color:#bef264;font-size:12px;font-weight:900;letter-spacing:3px;text-transform:uppercase}
+.hemanth-hero h1{font-size:clamp(30px,5vw,56px);line-height:1.08;margin:12px 0;background:linear-gradient(90deg,#fff7ed 2%,#fde68a 42%,#fdba74 72%,#f9a8d4 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px #f59e0b33}
+.hemanth-hero p{max-width:680px;color:#ecfdf5;font-size:15px;line-height:1.75;margin:0}
+.hemanth-hero .hero-chip{display:inline-flex;margin-top:20px;padding:9px 15px;border:1px solid #bef26499;border-radius:30px;background:#36531466;color:#fef3c7;font-size:12px;font-weight:900;letter-spacing:1px;box-shadow:0 0 18px #a3e63522}
+@media(max-width:520px){.hemanth-hero{border-radius:18px;padding:24px 18px}.hemanth-hero:after{right:-2%;top:12%}}
+
+
+/* USER INFORMATION CARD */
+.user-info-card{display:flex;align-items:center;gap:16px;padding:18px 20px;margin:18px 0 22px;border:1px solid #8b7cff88;border-radius:18px;background:linear-gradient(120deg,#272052,#17334a);box-shadow:0 10px 28px #05081655}
+.user-info-avatar{width:58px;height:58px;flex:0 0 58px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,#a78bfa,#22d3ee);color:#101426;font-size:24px;font-weight:900}
+.user-info-details{min-width:0;flex:1}
+.user-info-details h3{margin:0 0 5px;color:#fff;font-size:18px}
+.user-info-details p{margin:3px 0;color:#c5cbed;font-size:13px;overflow-wrap:anywhere}
+.user-info-tag{display:inline-block;margin-top:5px;padding:4px 9px;border-radius:20px;background:#22d3ee22;color:#8feaff;font-size:11px;font-weight:800;letter-spacing:.5px}
+@media(max-width:520px){.user-info-card{align-items:flex-start;padding:14px}.user-info-avatar{width:48px;height:48px;flex-basis:48px}}
+
+
+/* SUBJECT LIBRARY AND TOPIC DETAIL */
+.subject-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:14px}
+.subject-card{position:relative;cursor:pointer;padding:20px;border-radius:15px;background:linear-gradient(145deg,#28204f,#173b55);border:1px solid #8275ff66;color:#fff;min-height:170px;box-shadow:0 8px 20px #080d2580;transition:transform .18s,border-color .18s}
+.subject-card:hover{transform:translateY(-3px);border-color:#4de1e8}
+.subject-card-icon{font-size:30px}.subject-card h3{margin:10px 0 5px;color:#fff}.subject-card p{margin:0 0 8px;color:#cbd5f5;font-size:13px}.subject-card span{font-size:13px;color:#67e8f9;font-weight:700}
+.subject-card .subject-delete{position:relative;display:inline-flex!important;visibility:visible!important;opacity:1!important;top:auto;right:auto;margin:16px 0 0;padding:9px 13px;font-size:13px;z-index:3;background:linear-gradient(135deg,#b91c1c,#7f1d1d);border:1px solid #fb7185;color:#fff;border-radius:9px;cursor:pointer}.subject-card h3{padding-right:0}
+.subject-add-topic{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0}.subject-add-topic input{flex:1;min-width:190px;margin:0}.subject-add-topic button{white-space:nowrap}
+
+.topic-notepad{margin-top:18px;padding:18px;border:1px solid #8275ff88;border-radius:16px;background:linear-gradient(145deg,#211b45,#122d43)}
+.topic-notepad textarea{width:100%;min-height:260px;resize:vertical;line-height:1.7;padding:14px;border-radius:10px;background:#101426;color:#eef2ff;border:1px solid #64748b;font:15px/1.7 ui-monospace,Consolas,monospace}
+.topic-open-btn{border:0;background:transparent;color:#e8eaff;text-align:left;font:inherit;font-weight:750;cursor:pointer;padding:6px 2px;text-decoration:underline;text-decoration-color:#67e8f9;text-underline-offset:4px}
+.topic-note-status{color:#8feaff;font-size:12px;margin-left:8px}
+.subject-topic-item{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:nowrap;margin:10px 0}.subject-topic-item label{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.subject-topic-item .row{flex:0 0 auto;display:flex;align-items:center;gap:8px}.subject-topic-item .row button{white-space:nowrap}.subject-topic-item .row button.danger{margin-left:4px;display:inline-flex!important;visibility:visible!important;opacity:1!important;background:linear-gradient(135deg,#b91c1c,#7f1d1d);border:1px solid #fb7185;color:#fff;padding:9px 12px;border-radius:9px;cursor:pointer}
+@media(max-width:560px){.subject-topic-item{align-items:flex-start;flex-wrap:wrap}.subject-topic-item .row{width:100%;justify-content:flex-end}.subject-topic-item .row button{flex:0 1 auto}}
+
+
+.notes-subject-group{margin:18px 0 26px;padding:16px;border:1px solid var(--border,rgba(150,150,180,.22));border-radius:16px;background:rgba(120,100,180,.045)}
+.notes-subject-group>h2{margin:0 0 14px}
+/* Full-screen topic Notepad: cover the entire browser window */
+.topic-notepad#topicNotepad{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:clamp(14px,2.5vw,32px)!important;border:0!important;border-radius:0!important;z-index:2147483000!important;display:flex!important;flex-direction:column!important;gap:14px!important;overflow:hidden!important;background:#11182d!important;box-shadow:none!important}
+.topic-notepad#topicNotepad h3{flex:0 0 auto;color:#f3f4ff;font-size:clamp(20px,2vw,28px);margin:0!important}
+.topic-notepad#topicNotepad>p{flex:0 0 auto;color:#bfc9e8;margin:0!important}
+.topic-notepad#topicNotepad textarea{display:block;flex:1 1 auto!important;width:100%!important;min-height:0!important;height:auto!important;resize:none!important;margin:0!important;padding:20px!important;background:#0a1020!important;color:#f4f6ff!important;border:1px solid #64748b!important;border-radius:12px!important;font:16px/1.7 ui-monospace,Consolas,monospace!important}
+.topic-notepad#topicNotepad>div{flex:0 0 auto!important;margin-top:0!important;padding-bottom:env(safe-area-inset-bottom)}
+@media(max-width:700px){.topic-notepad#topicNotepad{padding:14px!important;gap:10px!important}.topic-notepad#topicNotepad textarea{padding:14px!important;font-size:15px!important}}
+
+
+/* APPEARANCE MODE SWITCH: Gaming is the original neon theme; Normal is a light theme. */
+.theme-toggle-button{white-space:nowrap;background:linear-gradient(135deg,#7c3aed,#0891b2)!important;color:#fff!important;border:1px solid #b7a6ff!important;box-shadow:0 0 16px #7c3aed55;font-weight:800}
+.theme-toggle-button:hover{filter:brightness(1.12);transform:translateY(-1px)}
+#appearancePanel .row button{min-width:180px}
+#appearancePanel button[aria-pressed="true"]{outline:3px solid #22d3ee;outline-offset:2px}
+
+/* Normal Mode overrides */
+body.normal-theme{background:#f2f4ff!important;color:#202944!important}
+body.normal-theme header{background:linear-gradient(100deg,#fff,#eef0ff)!important;color:#202944!important;border-bottom:1px solid #dfe2f2!important;box-shadow:0 5px 18px #29315c12!important}
+body.normal-theme header h2{color:#27264a!important;text-shadow:none!important}
+body.normal-theme header span{color:#4a5270}
+body.normal-theme main{background:transparent!important;color:#202944!important}
+body.normal-theme .page.section-fullscreen{background:#f2f4ff!important;color:#202944!important}
+body.normal-theme .card,body.normal-theme .panel{background:#fff!important;color:#202944!important;border:1px solid #e1e4f1!important;box-shadow:0 4px 16px #28345b12!important}
+body.normal-theme .card strong,body.normal-theme .interview-stat strong{color:#5546c8!important}
+body.normal-theme .small{color:#68728a!important}
+body.normal-theme .item{background:#fff!important;color:#202944!important;border-color:#e1e4f1!important}
+body.normal-theme input,body.normal-theme textarea,body.normal-theme select{background:#fff!important;color:#202944!important;border-color:#d6d9e8!important}
+body.normal-theme input::placeholder,body.normal-theme textarea::placeholder{color:#858da2!important}
+body.normal-theme table{background:#fff!important;color:#202944!important}
+body.normal-theme th,body.normal-theme td{border-color:#e5e6ef!important}
+body.normal-theme .progress{background:#e6e6f3!important}
+body.normal-theme .progress span{background:linear-gradient(90deg,#6655df,#22b8cf)!important}
+body.normal-theme .welcome-tile{background:linear-gradient(135deg,#fff,#eceeff)!important;color:#293052!important;border:1px solid #d9dcf4!important;box-shadow:0 5px 16px #28345b14!important}
+body.normal-theme .welcome-tile .welcome-label{color:#293052!important}
+body.normal-theme .welcome-subtitle{color:#68728a!important}
+body.normal-theme .user-info-card{background:linear-gradient(120deg,#fff,#edf4ff)!important;border-color:#d9def6!important;box-shadow:0 6px 20px #28345b12!important}
+body.normal-theme .user-info-details h3{color:#252b49!important}
+body.normal-theme .user-info-details p{color:#68728a!important}
+body.normal-theme .user-info-tag{background:#e7f7fb!important;color:#087e91!important}
+body.normal-theme .subject-card{background:linear-gradient(145deg,#fff,#edf1ff)!important;border-color:#d8def8!important;color:#202944!important;box-shadow:0 6px 18px #28345b14!important}
+body.normal-theme .subject-card h3{color:#272b52!important}
+body.normal-theme .subject-card p{color:#68728a!important}
+body.normal-theme .subject-card span{color:#087e91!important}
+body.normal-theme .topic-notepad{background:#f7f8ff!important;border-color:#d9ddf2!important}
+body.normal-theme .topic-open-btn{color:#3f3a91!important}
+body.normal-theme .topic-note-status{color:#087e91!important}
+body.normal-theme .topic-notepad#topicNotepad{background:#f7f8ff!important;color:#202944!important}
+body.normal-theme .topic-notepad#topicNotepad h3{color:#252b49!important}
+body.normal-theme .topic-notepad#topicNotepad>p{color:#68728a!important}
+body.normal-theme .topic-notepad#topicNotepad textarea{background:#fff!important;color:#202944!important;border-color:#d6d9e8!important}
+body.normal-theme .interview-stat{background:#fff!important;color:#202944!important;border-color:#e1e4f1!important}
+body.normal-theme .interview-feedback,body.normal-theme .quiz-question,body.normal-theme .spelling-feedback{background:#f1f0ff!important;color:#29264b!important;border-color:#dedbff!important}
+body.normal-theme .quiz-question label{background:#fff!important;color:#202944!important;border-color:#e0e3f2!important}
+body.normal-theme .spelling-word{background:#fff!important;color:#202944!important;border-color:#dfe3f2!important}
+body.normal-theme .store-shelf{background:#f5f3ff!important;color:#29264b!important;border-color:#ded8ff!important}
+body.normal-theme .store-card{background:linear-gradient(145deg,#fff,#f1f3ff)!important;color:#202944!important;border-color:#dfe3f2!important}
+body.normal-theme .store-card h3,body.normal-theme .store-card p{color:#293052!important}
+body.normal-theme .section-back-button{background:linear-gradient(135deg,#6254df,#0891b2)!important;color:#fff!important}
+body.normal-theme .secondary{background:#e9e8ff!important;color:#4336a7!important}
+body.normal-theme .theme-toggle-button{background:linear-gradient(135deg,#7c3aed,#0891b2)!important;color:#fff!important}
+body.normal-theme #output{background:#fff!important;color:#222!important}
+body.normal-theme .chat-layout{background:#fff!important}
+body.normal-theme .chat-messages{background:#f7f8fd!important}
+body.normal-theme .chat-compose textarea{background:#fff!important;color:#202944!important}
+
+
+/* ULTIMATE ARCADE GAMING SKIN — consistent across every page and fullscreen workspace */
+:root{color-scheme:dark;--arc-bg:#070b1b;--arc-panel:#111a35;--arc-panel2:#172344;--arc-border:#344477;--arc-cyan:#31e7f5;--arc-violet:#a78bfa;--arc-pink:#ff4fd8;--arc-text:#eef4ff;--arc-muted:#a8b6d8}
+html,body{min-height:100%;background-color:#070b1b!important;color:var(--arc-text)!important}
+body{background-image:radial-gradient(ellipse at 12% 8%,#6327ad55 0,transparent 34%),radial-gradient(ellipse at 88% 18%,#007dba40 0,transparent 32%),linear-gradient(135deg,#070b1b 0%,#0b1230 52%,#090d20 100%)!important;background-attachment:fixed!important}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.16;background-image:linear-gradient(#6e8dff22 1px,transparent 1px),linear-gradient(90deg,#6e8dff22 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 88%)}
+#app{position:relative;z-index:1;min-height:100vh}
+header{background:linear-gradient(100deg,#100d2d 0%,#10254a 55%,#10102b 100%)!important;color:#fff!important;border-bottom:1px solid #5b65b8!important;box-shadow:0 8px 32px #0008,0 1px 18px #8b5cf633!important}
+header h2{color:#fff!important;text-shadow:0 0 14px #a78bfa,0 0 26px #22d3ee66;letter-spacing:.4px}
+header span{color:#dbeafe!important}
+main{background:transparent!important;color:var(--arc-text)!important}
+.page{color:var(--arc-text)!important}
+.page h1,.page h2,.page h3,.page h4{color:#f4f7ff!important;text-shadow:0 0 12px #7c3aed35}
+.small,.welcome-subtitle,.subject-card p{color:var(--arc-muted)!important}
+.card,.panel,.item,.notes-subject-group,.interview-stat,.quiz-question,.spelling-feedback,.store-shelf,.store-card,.subject-card,.welcome-tile,.user-info-card{background:linear-gradient(145deg,#151e3c 0%,#10182f 58%,#17133a 100%)!important;color:var(--arc-text)!important;border:1px solid #46548a!important;box-shadow:0 10px 28px #0006,0 0 18px #6d5df01c!important}
+.card:hover,.panel:hover,.subject-card:hover,.store-card:hover{border-color:#42dff0!important;box-shadow:0 12px 30px #0008,0 0 22px #22d3ee35!important}
+.card strong,.interview-stat strong{color:#67e8f9!important;text-shadow:0 0 14px #22d3ee55}
+button{background:linear-gradient(120deg,#6d35df,#315ce8 58%,#087f9e)!important;color:#fff!important;border:1px solid #9d8cff!important;box-shadow:0 5px 16px #03071888,0 0 12px #7c3aed30!important;transition:transform .16s,filter .16s,box-shadow .16s}
+button:hover{filter:brightness(1.16)!important;transform:translateY(-2px);box-shadow:0 8px 22px #0009,0 0 18px #22d3ee55!important}
+button.secondary{background:linear-gradient(120deg,#25214e,#16465d)!important;color:#baf7ff!important;border-color:#4e91b4!important}
+button.danger{background:linear-gradient(120deg,#a51e59,#e0446b)!important;border-color:#ff8bad!important}
+button.success{background:linear-gradient(120deg,#087f70,#16a58b)!important;border-color:#62e8cb!important}
+input,textarea,select{background:#080f24!important;color:#f2f6ff!important;border:1px solid #52618f!important;box-shadow:inset 0 1px 5px #0006!important}
+input::placeholder,textarea::placeholder{color:#8999bd!important}
+input:focus,textarea:focus,select:focus{outline:2px solid #22d3ee!important;border-color:#22d3ee!important;box-shadow:0 0 0 4px #22d3ee22!important}
+table{background:#101a35!important;color:#eef4ff!important;border:1px solid #394a78!important}
+th{background:#202b50!important;color:#8ff4ff!important}
+th,td{border-color:#34436d!important}
+#output{background:#050b19!important;color:#a7f3d0!important;border:1px solid #3a6382!important}
+aside{background:linear-gradient(180deg,#10102c,#10233e)!important;border-right:1px solid #46548a!important;color:#fff!important}
+aside button{background:transparent!important;border-color:transparent!important;box-shadow:none!important;color:#dce8ff!important}
+aside button.active,aside button:hover{background:linear-gradient(100deg,#6535c8,#125b83)!important;color:#fff!important;box-shadow:0 0 16px #7c3aed55!important}
+.progress,.sales-progress{background:#263252!important;border:1px solid #45527d!important}
+.progress span,.sales-progress span{background:linear-gradient(90deg,#8b5cf6,#22d3ee,#ff4fd8)!important;box-shadow:0 0 12px #22d3ee88!important}
+.page.section-fullscreen{background:radial-gradient(ellipse at 90% 0%,#26317a55,transparent 38%),linear-gradient(135deg,#080d20,#101a38 65%,#11102c)!important;color:var(--arc-text)!important}
+.topic-notepad,.topic-notepad#topicNotepad{background:linear-gradient(145deg,#101a36,#0b1228)!important;color:#f4f7ff!important;border-color:#5d62a5!important}
+.topic-notepad textarea,.topic-notepad#topicNotepad textarea{background:#050b1a!important;color:#eaf4ff!important;border-color:#4e6a9a!important}
+.chat-layout,.chat-messages{background:#0d1730!important;color:#eef4ff!important;border-color:#40517f!important}
+.chat-compose textarea{background:#080f24!important;color:#fff!important}
+.welcome-tile{position:relative;overflow:hidden}
+.welcome-tile:after{content:"✦  ◈  ✧";position:absolute;right:12px;bottom:7px;color:#66e9f5;font-size:22px;letter-spacing:5px;opacity:.48;text-shadow:0 0 12px #22d3ee}
+.subject-card-icon{filter:drop-shadow(0 0 8px #22d3ee88)}
+.section-back-button,.theme-toggle-button{background:linear-gradient(120deg,#7c3aed,#2563eb,#0891b2)!important;color:#fff!important;border-color:#8ceeff!important;box-shadow:0 0 18px #7c3aed55!important}
+.card,.panel{padding:15px}}
+
+/* Always-visible delete controls in Subjects & Topics */
+.subject-card .subject-delete{display:inline-flex!important;visibility:visible!important;opacity:1!important;position:relative!important;inset:auto!important;margin-top:16px!important;pointer-events:auto!important}
+.subject-topic-item .row,.subject-topic-item .row button.danger{display:inline-flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+@media(max-width:560px){.subject-card .subject-delete{margin-top:12px!important}.subject-topic-item .row{width:100%;justify-content:flex-end}}
+
+/* DAILY LEARNING GOALS — gaming-style goal cards */
+.goals-add-panel{border:1px solid rgba(125,92,255,.42)!important;}
+.goal-entry-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.goal-entry-row input{flex:1;min-width:220px;margin:0}
+.goals-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:16px 0}
+.goal-stat-card{padding:18px;border:1px solid rgba(91,110,255,.35);border-radius:16px;background:linear-gradient(135deg,rgba(42,35,91,.92),rgba(12,25,54,.96));box-shadow:0 0 18px rgba(91,75,255,.12);display:grid;gap:5px}
+.goal-stat-card>span{font-size:22px}.goal-stat-card small{color:var(--muted,#aeb9d5)}.goal-stat-card strong{font-size:25px;color:#8eeaff}
+.goals-list-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.goal-progress-track{height:10px;border-radius:99px;background:rgba(130,145,190,.18);overflow:hidden;margin:12px 0 18px}
+.goal-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#22d3ee);border-radius:99px;transition:width .25s ease;box-shadow:0 0 12px rgba(34,211,238,.55)}
+.goal-cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.goal-card{position:relative;min-width:0;padding:17px;border:1px solid rgba(106,125,255,.35);border-radius:15px;background:linear-gradient(145deg,rgba(28,34,75,.96),rgba(10,23,47,.98));box-shadow:0 8px 22px rgba(0,0,0,.18);transition:transform .18s,border-color .18s}
+.goal-card:hover{transform:translateY(-2px);border-color:rgba(34,211,238,.7)}
+.goal-card.is-complete{border-color:rgba(52,211,153,.55);background:linear-gradient(145deg,rgba(17,65,65,.72),rgba(10,29,48,.98))}
+.goal-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.goal-status-pill{font-size:11px;font-weight:800;letter-spacing:.04em;padding:5px 9px;border-radius:99px;color:#ffd98b;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.35)}
+.goal-status-pill.done{color:#7cf4c2;background:rgba(16,185,129,.13);border-color:rgba(16,185,129,.4)}
+.goal-card-text{font-size:15px;line-height:1.5;font-weight:650;overflow-wrap:anywhere;margin:0 0 13px}
+.goal-card.is-complete .goal-card-text{text-decoration:line-through;opacity:.72}
+.goal-card-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.goal-complete-btn{font-size:12px!important;padding:8px 11px!important;background:linear-gradient(90deg,#6d5dfc,#168fc7)!important}
+.goal-delete-btn{font-size:12px!important;padding:8px 10px!important}
+.goal-date{font-size:11px;color:var(--muted,#aeb9d5)}
+.weekly-goals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.weekly-goal-day{padding:12px;border:1px solid rgba(106,125,255,.25);border-radius:12px;background:rgba(30,38,76,.55)}
+.weekly-goal-day strong{display:block;margin-bottom:5px}.weekly-goal-day span{font-size:12px;color:var(--muted,#aeb9d5)}
+@media(max-width:650px){.goals-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.goal-entry-row button{width:100%}}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="app">
+<header>
+ <h2>🎮 <span class="brand-hemanth">HEMANTH</span> <span style="font-size:13px;color:#9feaff;letter-spacing:1px">STUDY STORE</span></h2>
+ <div class="row" style="flex:0 1 auto;align-items:center;gap:12px">
+  <button type="button" id="themeToggleButton" class="theme-toggle-button" onclick="toggleAppearanceMode()" aria-label="Switch website appearance">☀️ Normal Mode</button>
+  <span id="saveStatus" style="font-size:12px;opacity:.95" role="status" aria-live="polite">Automatic saving enabled</span>
+  <span id="cloudHeaderStatus" style="font-size:12px;opacity:.95" role="status" aria-live="polite">☁️ Cloud not connected</span>
+  <span style="font-size:14px;opacity:.95">👤 Hemanth</span>
+ </div>
+</header>
+
+<div class="layout">
+
+
+<main>
+<section id="dashboard" class="page active">
+ <section class="hemanth-hero" aria-label="Welcome to Study Store">
+  <div class="hemanth-kicker">✦ YOUR IDEAS · YOUR GOALS · YOUR GROWTH ✦</div>
+  <h1>WELCOME TO STUDY STORE</h1>
+  <p>Your learning journey starts here. Explore subjects, build new skills, practice every day, and turn small steps into big achievements. Learn at your pace and make every session count!</p>
+  <span class="hero-chip">📚 HEMANTH’S LEARNING WORLD · LEARN • PRACTICE • GROW</span>
+ </section>
+ <p class="small welcome-subtitle">Choose any section below. Click a card to open that learning area.</p>
+ <div class="welcome-grid" aria-label="Learning sections">
+  <button class="welcome-tile" onclick="openWelcomePage('dashboard')"><span class="welcome-icon">🏠</span><span class="welcome-label">Dashboard</span></button>
+  <button class="welcome-tile" onclick="openWelcomePage('subjects')"><span class="welcome-icon">📚</span><span class="welcome-label">Subjects & Topics</span></button>
+  <button class="welcome-tile" onclick="openWelcomePage('schedule')"><span class="welcome-icon">📅</span><span class="welcome-label">Class Schedule</span></button>
+  <button class="welcome-tile" onclick="openWelcomePage('goals')"><span class="welcome-icon">🎯</span><span class="welcome-label">Learning Goals</span></button>
+  <button class="welcome-tile" onclick="openWelcomePage('spelling')"><span class="welcome-icon">🔤</span><span class="welcome-label">Spelling Skills</span></button>
+  <button class="welcome-tile" onclick="openWelcomePage('quiz')"><span class="welcome-icon">🧠</span><span class="welcome-label">Quiz Practice</span></button>
+  <button class="welcome-tile" onclick="openWelcomePage('interview')"><span class="welcome-icon">🎤</span><span class="welcome-label">Interview Simulator</span></button>
+
+
+  <button class="welcome-tile" onclick="openWelcomePage('backup')"><span class="welcome-icon">💾</span><span class="welcome-label">Backup & Settings</span></button>
+ </div>
+</section>
+
+<section id="subjects" class="page">
+ <h1>📚 Subjects & Topics</h1>
+ <div class="panel">
+  <h3>Add Subject</h3>
+  <div class="row">
+   <input id="subjectName" placeholder="Enter subject name">
+   <button onclick="addSubject()">+ Add Subject</button>
+  </div>
+ </div>
+ <div class="panel">
+  <div id="subjectList" class="subject-grid"></div>
+  <div id="subjectDetail" class="panel hidden"></div>
+ </div>
+</section>
+
+
+
+<section id="schedule" class="page">
+ <h1>📅 Weekly Class Schedule</h1>
+ <div class="panel">
+  <h3>Add Class</h3>
+  <select id="classDay">
+   <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+   <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+  </select>
+  <input id="classTime" placeholder="Time (e.g. 9:00 AM)">
+  <input id="classSubject" placeholder="Subject">
+  <button onclick="addClass()">Add Class</button>
+ </div>
+ <div id="scheduleList"></div>
+</section>
+
+
+
+<section id="goals" class="page">
+ <h1>🎯 Daily Learning Goals</h1>
+ <p class="small">Add your learning targets as cards. Mark each one complete when you finish it.</p>
+ <div class="panel goals-add-panel">
+  <h3>＋ Add a New Goal</h3>
+  <div class="goal-entry-row">
+   <input id="goalInput" type="text" maxlength="160" placeholder="Example: Complete Python functions practice" onkeydown="if(event.key==='Enter')addGoal()">
+   <button type="button" onclick="addGoal()">＋ Add Goal</button>
+  </div>
+ </div>
+ <div class="goals-summary-grid">
+  <div class="goal-stat-card"><span>🎯</span><small>Total Goals</small><strong id="goalTotalCount">0</strong></div>
+  <div class="goal-stat-card"><span>✅</span><small>Completed</small><strong id="goalCompletedCount">0</strong></div>
+  <div class="goal-stat-card"><span>⚡</span><small>Remaining</small><strong id="goalRemainingCount">0</strong></div>
+  <div class="goal-stat-card"><span>🏆</span><small>Progress</small><strong id="goalProgressPercent">0%</strong></div>
+ </div>
+ <div class="panel">
+  <div class="goals-list-heading"><h3>📋 My Goal Cards</h3><span class="small" id="goalListStatus">No goals added yet</span></div>
+  <div id="goalProgressTrack" class="goal-progress-track"><div id="goalProgressFill" class="goal-progress-fill"></div></div>
+  <div id="goalList" class="goal-cards-grid"></div>
+ </div>
+ <div class="panel">
+  <h3>📅 Weekly Study Tracker</h3>
+  <div id="weeklyTracker" class="weekly-goals-grid"></div>
+ </div>
+</section>
+
+<section id="quiz" class="page">
+ <h1>🧠 Quiz Practice</h1>
+ <p class="small">Choose one of the eight approved interview and technical categories. Every round contains exactly 15 questions selected from that category's 500+ question bank.</p>
+ <div class="panel">
+  <h3>🎯 Choose your quiz category</h3>
+  <div class="grid2">
+   <div><label for="quizSubject">Quiz category</label><select id="quizSubject">
+    <option value="python">Python</option><option value="mysql">MySQL</option><option value="genai">GenAI</option><option value="agentai">Agentic AI</option><option value="powerbi">Power BI</option><option value="hr">HR Round</option><option value="aiEngineer">AI Engineer</option><option value="dataEngineer">Data Engineer</option>
+   </select></div>
+   <div><label for="quizDifficulty">Difficulty</label><select id="quizDifficulty"><option value="all">Mixed level</option><option value="easy">Beginner</option><option value="medium">Intermediate</option><option value="hard">Advanced</option></select></div>
+  </div>
+  <p id="quizBankCount" class="small">Each category has 500+ questions · 15 questions per round.</p>
+  <button onclick="startTopicQuiz()">Start 15-Question Round</button>
+  <p id="quizSetupMessage" class="small"></p>
+ </div>
+ <div class="panel" id="quizPlayPanel">
+  <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:wrap"><h3 id="quizRoundTitle">Your quiz will appear here</h3><span id="quizProgress" class="badge">Ready</span></div>
+  <div id="quizArea"><p class="small">Select a category and start your 15-question round.</p></div>
+  <button onclick="checkQuiz()">Submit Answers</button>
+  <button class="secondary" onclick="startTopicQuiz()">New 15-Question Round</button>
+  <p id="quizResult" aria-live="polite"></p><div id="quizReview"></div>
+ </div>
+ <div class="panel"><h3>📊 Saved Quiz History</h3><div id="quizHistory"><p class="small">Your completed quiz results will appear here.</p></div></div>
+</section>
+
+
+<section id="interview" class="page">
+ <h1>🎤 Interview Simulator</h1>
+ <p class="small">Practice job interviews one question at a time. Write your answer, review the sample answer and track your scores.</p>
+ <div class="interview-hero">
+  <h2>Build your interview confidence 🚀</h2>
+  <p>Choose a technical topic, difficulty and question count. Practise one question at a time.</p>
+  <div class="row" style="align-items:end;gap:12px;flex-wrap:wrap">
+   <div style="flex:2;min-width:220px"><label for="interviewCategory"><strong>Interview topic</strong></label>
+    <select id="interviewCategory" onchange="resetInterview()">
+     <option value="AI">Artificial Intelligence (AI)</option><option value="ML">Machine Learning (ML)</option>
+     <option value="GenAI">Generative AI (GenAI)</option><option value="AIAgent">AI Agents</option>
+     <option value="Python">Python</option><option value="MySQL">MySQL</option>
+     <option value="AIEngineering">AI Engineering</option><option value="DataEngineering">Data Engineering</option>
+    </select>
+   </div>
+   <div style="flex:1;min-width:150px"><label for="interviewLevel"><strong>Difficulty</strong></label>
+    <select id="interviewLevel" onchange="resetInterview()"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>
+   </div>
+   <div style="flex:1;min-width:145px"><label for="interviewTotal"><strong>Questions</strong></label>
+    <select id="interviewTotal" onchange="resetInterview()"><option value="5">5 questions</option><option value="10">10 questions</option><option value="15">15 questions</option><option value="20">20 questions</option></select>
+   </div>
+   <button onclick="startInterview()">Start Interview</button>
+  </div>
+  <p class="small">Each topic includes prepared questions and sample answers. For question counts above five, extra topic-focused practice questions are added. Scores are practice estimates, not professional assessments.</p>
+ </div>
+ <div class="interview-stats">
+  <div class="interview-stat">Completed interviews<strong id="interviewCount">0</strong></div>
+  <div class="interview-stat">Best score<strong id="interviewBest">0%</strong></div>
+  <div class="interview-stat">Questions answered<strong id="interviewAnswered">0</strong></div>
+ </div>
+ <div class="panel" id="interviewPanel">
+  <div class="row"><span class="interview-chip" id="interviewType">Artificial Intelligence (AI)</span><span class="small" id="interviewProgress">Ready to begin</span></div>
+  <div class="progress"><span id="interviewProgressBar" style="width:0%"></span></div>
+  <div class="interview-question" id="interviewQuestion">Choose a topic and press “Start Interview” to get your first question.</div>
+  <textarea id="interviewAnswer" class="interview-answer" placeholder="Type your answer here..." oninput="updateInterviewAnswerColor()" disabled></textarea>
+  <div class="row">
+   <button id="evaluateInterviewBtn" onclick="evaluateInterviewAnswer()" disabled>Evaluate My Answer</button>
+   <button class="secondary" onclick="showInterviewSample()" id="sampleInterviewBtn" disabled>Show Sample Answer</button>
+   <button class="secondary" onclick="nextInterviewQuestion()" id="nextInterviewBtn" disabled>Next Question →</button>
+  </div>
+  <div id="interviewFeedback" aria-live="polite"></div>
+ </div>
+ <div class="panel">
+  <h3>📚 Interview Tips</h3>
+  <ul class="list"><li>Listen carefully and answer the exact question.</li><li>Use short, clear sentences and give a real example when possible.</li><li>For technical questions, explain the concept and show a small example.</li><li>If you do not know an answer, be honest and explain how you would learn it.</li></ul>
+ </div>
+ <div class="panel"><h3>📈 Your Interview History</h3><div id="interviewHistory">No mock interviews completed yet.</div></div>
+</section>
+
+
+
+
+<section id="store" class="page">
+ <div class="store-grid" id="studyStoreGrid">
+  <article class="store-card"><div class="store-icon">🐍</div><span class="store-tag">CODING PACK</span><h3>Python Starter Pack</h3><p>Variables, conditions, loops, functions and beginner coding missions.</p><button onclick="collectStudyItem('python')">＋ Collect pack</button></article>
+  <article class="store-card"><div class="store-icon">🗄️</div><span class="store-tag">DATABASE PACK</span><h3>MySQL Mission Pack</h3><p>SQL commands, joins, functions and query-writing challenges.</p><button onclick="collectStudyItem('mysql')">＋ Collect pack</button></article>
+  <article class="store-card"><div class="store-icon">🧠</div><span class="store-tag">AI / ML PACK</span><h3>AI & ML Quick Revision</h3><p>Machine learning basics, regression, algorithms and key definitions.</p><button onclick="collectStudyItem('aiml')">＋ Collect pack</button></article>
+  <article class="store-card"><div class="store-icon">🔤</div><span class="store-tag">ENGLISH PACK</span><h3>English Word Builder</h3><p>Useful vocabulary, spelling practice and sentence-building prompts.</p><button onclick="collectStudyItem('english')">＋ Collect pack</button></article>
+  <article class="store-card"><div class="store-icon">🎤</div><span class="store-tag">CAREER PACK</span><h3>Interview Challenge Cards</h3><p>HR, Python, MySQL and AI/ML interview preparation prompts.</p><button onclick="collectStudyItem('interview')">＋ Collect pack</button></article>
+  <article class="store-card"><div class="store-icon">🗓️</div><span class="store-tag">PRODUCTIVITY PACK</span><h3>Study Planner Kit</h3><p>Daily study targets, revision checklists and weekly planning ideas.</p><button onclick="collectStudyItem('planner')">＋ Collect pack</button></article>
+ </div>
+ <div class="store-shelf"><h3>🎒 My Study Shelf</h3><p class="small">Your collected packs are saved in this browser account.</p><div id="myStudyShelf">No packs collected yet. Choose a free pack above to get started.</div></div>
+</section>
+
+<section id="backup" class="page">
+ <h1>💾 Backup & Settings</h1>
+ <div class="panel" id="appearancePanel">
+  <h3>🎨 Website Appearance</h3>
+  <p>Choose the look of your personal Study Store. Your selection is remembered when you reopen the website.</p>
+  <div class="row" style="max-width:560px">
+   <button type="button" id="normalThemeButton" class="secondary" onclick="setAppearanceMode('normal')">☀️ Normal Mode</button>
+   <button type="button" id="gamingThemeButton" onclick="setAppearanceMode('gaming')">🎮 Gaming Mode</button>
+  </div>
+  <p id="appearanceStatus" class="small" role="status" aria-live="polite">Gaming Mode is active.</p>
+ </div>
+ <div class="panel">
+  <h3>Export Your Learning Data</h3>
+  <p>Download your subjects, topics, notes, assignments and schedule.</p>
+  <button onclick="exportData()">Download Backup</button>
+ </div>
+ <div class="panel">
+  <h3>Import Backup</h3>
+  <input type="file" id="importFile" accept=".json,application/json">
+  <button onclick="importData()">Import Backup</button>
+ </div>
+ <div class="panel" id="cloudStoragePanel">
+  <h3>☁️ Private Cloud Storage</h3>
+  <p>Your Study Store opens directly without a sign-up page. To keep your information in private cloud storage and sync it across devices, connect the authorized email once. A verification code is sent only to that mailbox.</p>
+  <p><strong>Authorized owner:</strong> <span id="cloudOwnerEmail">kvssmh464@gmail.com</span></p>
+  <p id="cloudStorageStatus" class="small" role="status" aria-live="polite">Checking cloud storage setup…</p>
+  <div class="row" id="cloudConnectActions">
+   <button id="cloudSendCodeButton" onclick="sendCloudVerificationCode()">Connect Private Cloud</button>
+   <button class="secondary" onclick="retryCloudConnectionCheck()">Refresh Cloud Status</button>
+  </div>
+  <div id="cloudOtpArea" class="hidden" style="margin-top:12px">
+   <label for="cloudOtpInput"><strong>Enter the 6-digit email verification code</strong></label>
+   <input id="cloudOtpInput" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code">
+   <div class="row">
+    <button onclick="verifyCloudVerificationCode()">Verify and Sync</button>
+    <button class="secondary" onclick="sendCloudVerificationCode()">Send Another Code</button>
+   </div>
+  </div>
+  <p class="small">Cloud sync is enabled only after the Supabase project URL and publishable/anon key are configured in this file and the database SQL setup is completed. Never put a service-role key in this website.</p>
+  <p class="small"><strong>Security note:</strong> This HTML runs in the visitor’s browser, so its source can be viewed or copied. The database is protected by email OTP and Row Level Security; never place passwords, service-role keys, or other private server secrets in this file. The main cloud record is configured without a delete permission for normal signed-in website sessions.</p>
+  <details class="panel" style="margin-top:14px">
+   <summary style="cursor:pointer;font-weight:700">One-time cloud database setup (included in this single HTML file)</summary>
+   <p class="small" style="margin-top:12px">Create a Supabase project, open its SQL Editor, and run the SQL below once. Then replace the two Supabase placeholders near the beginning of the main JavaScript section in this HTML file with your Project URL and public publishable/anon key. Do not use a service-role or secret key.</p>
+   <p class="small">In Supabase Authentication, enable Email OTP and use <code>{{ .Token }}</code> in the email template so a six-digit code is sent to the authorized mailbox.</p>
+   <button class="secondary" type="button" onclick="copyCloudSetupSQL()">Copy database SQL</button>
+   <pre id="cloudSetupSql" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:380px;overflow:auto;background:#f5f6ff;padding:12px;border-radius:8px;font-size:12px">-- Hemanth Study Store: private cloud storage setup
+-- Run this entire script in Supabase SQL Editor for your project.
+
+create table if not exists public.hemanth_study_store (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  owner_email text not null default 'kvssmh464@gmail.com',
+  payload jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now(),
+  constraint hemanth_study_store_owner_email_check
+    check (lower(owner_email) = 'kvssmh464@gmail.com')
+);
+
+alter table public.hemanth_study_store enable row level security;
+
+revoke all on table public.hemanth_study_store from anon;
+revoke delete, truncate, references, trigger on table public.hemanth_study_store from authenticated;
+grant select, insert, update on table public.hemanth_study_store to authenticated;
+
+-- Remove any older delete policy: normal website sessions cannot delete the main cloud record.
+drop policy if exists "Hemanth can delete own Study Store" on public.hemanth_study_store;
+drop policy if exists "Hemanth can read own Study Store" on public.hemanth_study_store;
+drop policy if exists "Hemanth can create own Study Store" on public.hemanth_study_store;
+drop policy if exists "Hemanth can update own Study Store" on public.hemanth_study_store;
+
+create policy "Hemanth can read own Study Store"
+on public.hemanth_study_store for select to authenticated
+using (
+  auth.uid() = user_id
+  and lower(coalesce(auth.jwt() ->> 'email', '')) = 'kvssmh464@gmail.com'
+);
+
+create policy "Hemanth can create own Study Store"
+on public.hemanth_study_store for insert to authenticated
+with check (
+  auth.uid() = user_id
+  and lower(coalesce(auth.jwt() ->> 'email', '')) = 'kvssmh464@gmail.com'
+  and lower(owner_email) = 'kvssmh464@gmail.com'
+);
+
+create policy "Hemanth can update own Study Store"
+on public.hemanth_study_store for update to authenticated
+using (
+  auth.uid() = user_id
+  and lower(coalesce(auth.jwt() ->> 'email', '')) = 'kvssmh464@gmail.com'
+)
+with check (
+  auth.uid() = user_id
+  and lower(coalesce(auth.jwt() ->> 'email', '')) = 'kvssmh464@gmail.com'
+  and lower(owner_email) = 'kvssmh464@gmail.com'
+);
+
+-- No DELETE policy is created for the main Study Store record.
+
+-- Daily recovery snapshots: one backup per day, per authenticated owner.
+create table if not exists public.hemanth_study_store_backups (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  backup_date date not null default (now() at time zone 'utc')::date,
+  payload jsonb not null,
+  created_at timestamptz not null default now(),
+  primary key (user_id, backup_date),
+  constraint hemanth_study_store_backups_owner_check
+    check (user_id is not null)
+);
+
+alter table public.hemanth_study_store_backups enable row level security;
+revoke all on table public.hemanth_study_store_backups from anon;
+grant select, insert, delete on table public.hemanth_study_store_backups to authenticated;
+
+drop policy if exists "Hemanth can read own Study Store backups" on public.hemanth_study_store_backups;
+drop policy if exists "Hemanth can create own Study Store backups" on public.hemanth_study_store_backups;
+drop policy if exists "Hemanth can delete own Study Store backups" on public.hemanth_study_store_backups;
+
+create policy "Hemanth can read own Study Store backups"
+on public.hemanth_study_store_backups for select to authenticated
+using (
+  auth.uid() = user_id
+  and lower(coalesce(auth.jwt() ->> 'email', '')) = 'kvssmh464@gmail.com'
+);
+
+create policy "Hemanth can create own Study Store backups"
+on public.hemanth_study_store_backups for insert to authenticated
+with check (
+  auth.uid() = user_id
+  and lower(coalesce(auth.jwt() ->> 'email', '')) = 'kvssmh464@gmail.com'
+);
+
+create policy "Hemanth can delete own Study Store backups"
+on public.hemanth_study_store_backups for delete to authenticated
+using (
+  auth.uid() = user_id
+  and lower(coalesce(auth.jwt() ->> 'email', '')) = 'kvssmh464@gmail.com'
+);</pre>
+  </details>
+ </div>
+ <div class="panel">
+  <h3>Storage Information</h3>
+  <p>Changes are saved in this browser immediately and synchronized to your private cloud. When cloud sync is active, the app also keeps one recovery snapshot per day before the first cloud overwrite, retaining the latest 30 daily snapshots. These snapshots are stored in a separate private Supabase table. Use Download Backup as an additional offline safety copy.</p>
+  <button class="danger" onclick="clearData()">Delete All Learning Data</button>
+ </div>
+ <div class="panel">
+  <h3>Personal Profile</h3>
+  <p><strong>Username:</strong> Hemanth</p>
+  <p class="small">This is Hemanth’s personal Study Store. No traditional sign-up or sign-in page is used. A one-time email verification is required to connect private cloud storage on a new browser or device.</p>
+ </div>
+</section>
+
+
+
+
+<section id="spelling" class="page">
+ <h1>🔤 Spelling Skills</h1>
+ <p class="small">Build accurate everyday English spelling with word lists, missing-letter practice and quick quizzes.</p>
+ <div class="cards">
+  <div class="card">📘 Words practised<strong id="spellingDone">0</strong></div>
+  <div class="card">🎯 Correct answers<strong id="spellingCorrect">0</strong></div>
+  <div class="card">📈 Progress<strong id="spellingPercent">0%</strong></div>
+ </div>
+ <div class="panel"><h3>Spelling Skills Progress</h3><div class="sales-progress"><span id="spellingProgressBar" style="width:0%"></span></div><p class="small" id="spellingProgressText">Practise words to build your spelling skills.</p></div>
+ <div class="panel"><h2>📖 Learn common words</h2><p class="small">Read each word, meaning and example sentence. Then practise typing it below.</p><div id="spellingWordList"></div></div>
+ <div class="panel"><h2>✍️ Type the correct spelling</h2><p id="spellingPrompt">Press “New Word” to begin.</p><input id="spellingInput" placeholder="Type the word correctly" autocomplete="off" onkeydown="if(event.key==='Enter')checkSpelling()"><div class="row"><button onclick="checkSpelling()">Check Spelling</button><button class="secondary" onclick="newSpellingWord()">New Word</button></div><div id="spellingFeedback" class="spelling-feedback" aria-live="polite">Choose a word and practise its spelling.</div></div>
+ <div class="panel"><h2>🧩 Missing-letter practice</h2><p>Choose the missing letter to complete the word.</p><div id="missingWord" class="spelling-blank">c _ t</div><div id="missingOptions" class="row"></div><p id="missingFeedback" class="small" aria-live="polite"></p><button class="secondary" onclick="newMissingWord()">Next Question</button></div>
+ <div class="panel"><h2>📝 Spelling Quiz</h2><p id="spellingQuizQuestion">Choose the correctly spelled word.</p><div id="spellingQuizOptions"></div><p id="spellingQuizFeedback" class="small" aria-live="polite"></p><button class="secondary" onclick="nextSpellingQuiz()">Next Question</button></div>
+</section>
+
+</main>
+</div>
+</div>
+
+<script>
+"use strict";
+
+/* Persistent website appearance: Gaming Mode is the default for this edition. */
+const APPEARANCE_STORAGE_KEY = "hemanthStudyStoreAppearance_v1";
+function setAppearanceMode(mode){
+ const selected = mode === "normal" ? "normal" : "gaming";
+ document.body.classList.toggle("normal-theme", selected === "normal");
+ try{localStorage.setItem(APPEARANCE_STORAGE_KEY, selected);}catch(error){console.warn("Could not save appearance preference",error);}
+ const quickButton = document.getElementById("themeToggleButton");
+ const normalButton = document.getElementById("normalThemeButton");
+ const gamingButton = document.getElementById("gamingThemeButton");
+ const status = document.getElementById("appearanceStatus");
+ if(quickButton){
+  quickButton.textContent = selected === "gaming" ? "☀️ Normal Mode" : "🎮 Gaming Mode";
+  quickButton.setAttribute("aria-label", selected === "gaming" ? "Switch to Normal Mode" : "Switch to Gaming Mode");
+  quickButton.title = selected === "gaming" ? "Switch to Normal Mode" : "Switch to Gaming Mode";
+ }
+ if(normalButton)normalButton.setAttribute("aria-pressed", String(selected === "normal"));
+ if(gamingButton)gamingButton.setAttribute("aria-pressed", String(selected === "gaming"));
+ if(status)status.textContent = selected === "gaming" ? "🎮 Gaming Mode is active. Neon purple, blue and cyan colors are enabled." : "☀️ Normal Mode is active. The light Study Store appearance is enabled.";
+ document.documentElement.dataset.appearance = selected;
+}
+function toggleAppearanceMode(){
+ setAppearanceMode(document.body.classList.contains("normal-theme") ? "gaming" : "normal");
+}
+(function restoreAppearancePreference(){
+ let saved = "gaming";
+ try{saved = localStorage.getItem(APPEARANCE_STORAGE_KEY) || "gaming";}catch(error){console.warn("Could not read appearance preference",error);}
+ if(saved === "normal")document.body.classList.add("normal-theme");
+ document.documentElement.dataset.appearance = saved === "normal" ? "normal" : "gaming";
+})();
+
+
+/* PERSONAL STUDY STORE PROFILE. Cloud access still requires the authorized email OTP session.
+   This browser profile identifier is not an authentication credential or a secret. */
+const HEMANTH_PROFILE_ID = "hemanth_personal_profile";
+// Cloud credentials: replace these two placeholders with your Supabase Project URL
+// and the public publishable/anon key. Never use the service_role/secret key here.
+const SUPABASE_URL = "https://apgudagowzzvrvfxyfsv.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_YHqqNaxc8C8HM5GgshEqoQ_kCJu7nAh";
+const AUTHORIZED_CLOUD_EMAIL = "kvssmh464@gmail.com";
+const CLOUD_TABLE_NAME = "hemanth_study_store";
+function copyCloudSetupSQL(){
+ const sql=document.getElementById("cloudSetupSql")?.textContent||"";
+ if(!sql){alert("Cloud database SQL is not available in this file.");return;}
+ if(navigator.clipboard && navigator.clipboard.writeText){
+  navigator.clipboard.writeText(sql).then(()=>alert("Cloud database SQL copied. Paste it into the Supabase SQL Editor.")).catch(()=>alert("Select and copy the SQL shown below manually."));
+ }else{
+  alert("Select and copy the SQL shown below manually.");
+ }
+}
+let cloudClient = null;
+let cloudUser = null;
+let cloudReady = false;
+let cloudSaveTimer = null;
+let cloudSaveRunning = false;
+let cloudSaveQueued = false;
+let cloudApplyingRemote = false;
+let cloudLastSyncedAt = 0;
+const LEGACY_DATA_KEY = "dailyClassLearningData_v2";
+const LEGACY_CHAT_KEY = "dailyClassLearningChat_v1";
+const ACTIVE_ACCOUNT_KEY = "dailyClassLearningActiveEmail_v1";
+const ACCOUNTS_KEY = "dailyClassLearningAccounts_v1";
+let activeProfileId = HEMANTH_PROFILE_ID;
+
+function userDataKey(){ return "dailyClassLearningData_v2_profile_" + activeProfileId; }
+function userChatKey(){ return "dailyClassLearningChat_v1_profile_" + activeProfileId; }
+
+function readLegacyAccounts(){
+ try{return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)||"{}");}catch(e){return {};}
+}
+function migrateLegacyDataOnce(){
+ try{
+  const targetDataKey=userDataKey();
+  const targetChatKey=userChatKey();
+  const legacyAccounts=readLegacyAccounts();
+  const candidateEmails=[];
+  const addCandidate=value=>{
+   const email=String(value||"").trim().toLowerCase();
+   if(email && !candidateEmails.includes(email)) candidateEmails.push(email);
+  };
+  // Prefer the most recently active profile, then the most recently saved older profile.
+  addCandidate(localStorage.getItem(ACTIVE_ACCOUNT_KEY));
+  addCandidate(localStorage.getItem("dailyClassLearningLastEmail_v1"));
+  Object.keys(legacyAccounts).sort((a,b)=>{
+   const ta=Date.parse(legacyAccounts[a]?.lastSavedAt||legacyAccounts[a]?.createdAt||0)||0;
+   const tb=Date.parse(legacyAccounts[b]?.lastSavedAt||legacyAccounts[b]?.createdAt||0)||0;
+   return tb-ta;
+  }).forEach(addCandidate);
+
+  if(!localStorage.getItem(targetDataKey)){
+   let previousData=null;
+   for(const email of candidateEmails){
+    const oldKey="dailyClassLearningData_v2_user_"+encodeURIComponent(email);
+    const stored=localStorage.getItem(oldKey);
+    if(stored){
+     try{JSON.parse(stored);previousData=stored;break;}catch(e){console.warn("Skipped an invalid previous profile data record",e);}
+    }
+    const embedded=legacyAccounts[email]?.learningData;
+    if(embedded && typeof embedded==="object"){previousData=JSON.stringify(embedded);break;}
+   }
+   if(!previousData){
+    const legacy=localStorage.getItem(LEGACY_DATA_KEY);
+    if(legacy){try{JSON.parse(legacy);previousData=legacy;}catch(e){console.warn("Skipped invalid legacy learning data",e);}}
+   }
+   if(previousData) localStorage.setItem(targetDataKey,previousData);
+  }
+  if(!localStorage.getItem(targetChatKey)){
+   let previousChat=null;
+   for(const email of candidateEmails){
+    const oldChat=localStorage.getItem("dailyClassLearningChat_v1_user_"+encodeURIComponent(email));
+    if(oldChat){previousChat=oldChat;break;}
+   }
+   if(!previousChat) previousChat=localStorage.getItem(LEGACY_CHAT_KEY);
+   if(previousChat) localStorage.setItem(targetChatKey,previousChat);
+  }
+  localStorage.setItem("dailyClassLearningHemanthMigration_v1","1");
+  // Remove only temporary login-session markers. Old profile records are left untouched as a safety copy.
+  localStorage.removeItem(ACTIVE_ACCOUNT_KEY);
+ }catch(error){console.warn("Could not migrate previous Study Store information",error);}
+}
+
+/* DATA */
+let data = createEmptyData();
+function createEmptyData(){
+ return {subjects:[],topics:[],notes:[],assignments:[],schedule:[],goals:[],completedDays:[],quizHistory:[],interviewHistory:[],spellingCompleted:[],spellingCorrect:0,studyStoreItems:[]};
+}
+
+function normalizeLearningData(source){
+ const defaults=createEmptyData();
+ const parsed=(source && typeof source==="object")?source:{};
+ const merged={...defaults,...parsed};
+ // Keep all collection fields usable even when opening data saved by an older Study Store version.
+ Object.keys(defaults).forEach(key=>{
+  if(Array.isArray(defaults[key]) && !Array.isArray(merged[key])) merged[key]=[];
+ });
+ if(typeof merged.spellingCorrect!=="number") merged.spellingCorrect=0;
+ return merged;
+}
+
+function loadData(){
+ data=createEmptyData();
+ try{
+  const saved=localStorage.getItem(userDataKey());
+  if(saved){
+   try{data=normalizeLearningData(JSON.parse(saved));}
+   catch(parseError){console.warn("Could not parse saved Hemanth learning data",parseError);}
+  }
+ }catch(e){console.warn("Local browser storage is unavailable; checking the backup database",e);}
+}
+
+const PERSISTENCE_DB_NAME="HemanthStudyStorePersistence";
+const PERSISTENCE_DB_VERSION=1;
+const PERSISTENCE_STORE_NAME="profiles";
+function userDataMetaKey(){return userDataKey()+"__meta";}
+
+function openPersistenceDatabase(){
+ return new Promise((resolve,reject)=>{
+  if(!window.indexedDB){reject(new Error("IndexedDB is not available in this browser."));return;}
+  const request=window.indexedDB.open(PERSISTENCE_DB_NAME,PERSISTENCE_DB_VERSION);
+  request.onupgradeneeded=()=>{
+   const db=request.result;
+   if(!db.objectStoreNames.contains(PERSISTENCE_STORE_NAME))db.createObjectStore(PERSISTENCE_STORE_NAME,{keyPath:"profileId"});
+  };
+  request.onsuccess=()=>resolve(request.result);
+  request.onerror=()=>reject(request.error||new Error("Could not open the browser backup database."));
+ });
+}
+
+async function readPersistenceRecord(){
+ const db=await openPersistenceDatabase();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(PERSISTENCE_STORE_NAME,"readonly");
+  const request=tx.objectStore(PERSISTENCE_STORE_NAME).get(activeProfileId);
+  request.onsuccess=()=>resolve(request.result||null);
+  request.onerror=()=>reject(request.error||new Error("Could not read the browser backup database."));
+  tx.oncomplete=()=>db.close();
+  tx.onerror=()=>{db.close();reject(tx.error||new Error("Could not read the browser backup database."));};
+ });
+}
+
+async function writePersistenceRecord(snapshot,savedAt){
+ const db=await openPersistenceDatabase();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(PERSISTENCE_STORE_NAME,"readwrite");
+  tx.objectStore(PERSISTENCE_STORE_NAME).put({profileId:activeProfileId,snapshot,savedAt});
+  tx.oncomplete=()=>{db.close();resolve(true);};
+  tx.onerror=()=>{const error=tx.error||new Error("Could not write the browser backup database.");db.close();reject(error);};
+  tx.onabort=()=>{const error=tx.error||new Error("The browser backup transaction was cancelled.");db.close();reject(error);};
+ });
+}
+
+async function restoreIndexedDBIfNewer(){
+ let localSnapshot=null;
+ let localSavedAt=0;
+ try{
+  localSnapshot=localStorage.getItem(userDataKey());
+  const meta=JSON.parse(localStorage.getItem(userDataMetaKey())||"{}");
+  localSavedAt=Number(meta.savedAt)||0;
+ }catch(e){console.warn("Could not read local save metadata",e);}
+
+ try{
+  const record=await readPersistenceRecord();
+  if(record && typeof record.snapshot==="string"){
+   const recordSavedAt=Number(record.savedAt)||0;
+   // Recover from IndexedDB when the local copy is missing or older.
+   if(!localSnapshot || (localSavedAt>0 && recordSavedAt>localSavedAt)){
+    data=normalizeLearningData(JSON.parse(record.snapshot));
+    try{
+     localStorage.setItem(userDataKey(),JSON.stringify(data));
+     localStorage.setItem(userDataMetaKey(),JSON.stringify({savedAt:recordSavedAt||Date.now()}));
+    }catch(e){console.warn("Restored data in memory; local cache could not be updated",e);}
+    return;
+   }
+   // Preserve an older version's local data as authoritative on first upgrade,
+   // then seed the database instead of replacing it with an unknown older copy.
+   if(!localSavedAt || localSavedAt>=recordSavedAt){
+    const stamp=localSavedAt||Date.now();
+    try{localStorage.setItem(userDataMetaKey(),JSON.stringify({savedAt:stamp}));}catch(e){}
+    await writePersistenceRecord(localSnapshot,stamp);
+   }
+  }else if(localSnapshot){
+   const stamp=localSavedAt||Date.now();
+   try{localStorage.setItem(userDataMetaKey(),JSON.stringify({savedAt:stamp}));}catch(e){}
+   await writePersistenceRecord(localSnapshot,stamp);
+  }
+ }catch(e){
+  // localStorage remains the fallback if IndexedDB is unavailable or restricted.
+  console.info("Using local browser storage; secondary database is unavailable",e);
+ }
+}
+
+function cloudConfigIsReady(){
+ return !!(window.supabase && window.supabase.createClient &&
+  SUPABASE_URL.startsWith("https://") &&
+  !SUPABASE_URL.includes("PASTE_") &&
+  SUPABASE_ANON_KEY.length>20 && !SUPABASE_ANON_KEY.includes("PASTE_"));
+}
+function setCloudStatus(message, connected=false){
+ const panel=document.getElementById("cloudStorageStatus");
+ const header=document.getElementById("cloudHeaderStatus");
+ if(panel)panel.textContent=message;
+ if(header)header.textContent=connected?"☁️ Cloud synced ✓":"☁️ Cloud not connected";
+}
+function localSavedTimestamp(){
+ try{return Number(JSON.parse(localStorage.getItem(userDataMetaKey())||"{}").savedAt)||0;}
+ catch(e){return 0;}
+}
+function persistCloudSnapshotLocally(snapshot, savedAt){
+ const stamp=Number(savedAt)||Date.now();
+ try{
+  localStorage.setItem(userDataKey(),snapshot);
+  localStorage.setItem(userDataMetaKey(),JSON.stringify({savedAt:stamp}));
+ }catch(e){console.warn("Cloud data loaded in memory, but local cache could not be updated",e);}
+ writePersistenceRecord(snapshot,stamp).catch(e=>console.warn("Could not refresh IndexedDB from cloud",e));
+}
+function getCloudEmailFromSession(session){
+ return String(session?.user?.email||"").trim().toLowerCase();
+}
+async function createCloudClient(){
+ if(!cloudConfigIsReady()){
+  setCloudStatus("Cloud setup is not complete yet. Add your Supabase Project URL and publishable/anon key, then run the supplied SQL setup file.");
+  const send=document.getElementById("cloudSendCodeButton");if(send)send.disabled=true;
+  return false;
+ }
+ if(!cloudClient){
+  cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{
+   auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce"}
+  });
+ }
+ const send=document.getElementById("cloudSendCodeButton");if(send)send.disabled=false;
+ return true;
+}
+async function readCloudRecord(){
+ const {data:row,error}=await cloudClient.from(CLOUD_TABLE_NAME)
+  .select("user_id,owner_email,payload,updated_at")
+  .eq("user_id",cloudUser.id).maybeSingle();
+ if(error)throw error;
+ return row||null;
+}
+async function createDailyCloudBackup(fallbackPayload){
+ if(!cloudClient||!cloudUser)return;
+ const backupDate=new Date().toISOString().slice(0,10);
+ const {data:existing,error:readError}=await cloudClient
+  .from("hemanth_study_store_backups")
+  .select("backup_date")
+  .eq("user_id",cloudUser.id)
+  .eq("backup_date",backupDate)
+  .maybeSingle();
+ if(readError)throw readError;
+ if(existing)return;
+ // Preserve the previous cloud version before today's first overwrite.
+ const current=await readCloudRecord();
+ const payloadToBackup=current?.payload||fallbackPayload;
+ const {error:backupError}=await cloudClient
+  .from("hemanth_study_store_backups")
+  .insert({user_id:cloudUser.id,backup_date:backupDate,payload:payloadToBackup});
+ if(backupError && backupError.code!=="23505")throw backupError;
+ // Keep the latest 30 daily snapshots to limit storage use.
+ const cutoff=new Date(Date.now()-30*24*60*60*1000).toISOString().slice(0,10);
+ const {error:cleanupError}=await cloudClient
+  .from("hemanth_study_store_backups")
+  .delete().eq("user_id",cloudUser.id).lt("backup_date",cutoff);
+ if(cleanupError)console.warn("Old cloud backup cleanup was skipped",cleanupError);
+}
+async function writeCloudRecord(payload, savedAt){
+ await createDailyCloudBackup(payload);
+ const stamp=new Date(Number(savedAt)||Date.now()).toISOString();
+ const record={user_id:cloudUser.id,owner_email:AUTHORIZED_CLOUD_EMAIL,payload,updated_at:stamp};
+ const {error}=await cloudClient.from(CLOUD_TABLE_NAME).upsert(record,{onConflict:"user_id"});
+ if(error)throw error;
+ cloudLastSyncedAt=Date.parse(stamp)||Date.now();
+ setCloudStatus("Private cloud synced successfully · "+new Date(cloudLastSyncedAt).toLocaleString(),true);
+}
+async function syncCloudOnConnect(){
+ if(!cloudClient||!cloudUser)return;
+ cloudReady=false;
+ setCloudStatus("Connecting to your private cloud and checking saved information…");
+ const row=await readCloudRecord();
+ const localSnapshot=localStorage.getItem(userDataKey());
+ const localStamp=localSavedTimestamp();
+ if(!row){
+  // First connection: seed the cloud with the information already on this device.
+  await writeCloudRecord(normalizeLearningData(data),localStamp||Date.now());
+ }else{
+  const remoteStamp=Date.parse(row.updated_at)||0;
+  if(localSnapshot && localStamp>remoteStamp){
+   // Keep newer offline changes from this browser and upload them.
+   await writeCloudRecord(normalizeLearningData(JSON.parse(localSnapshot)),localStamp);
+  }else{
+   // The existing cloud record is the durable source of truth for this profile.
+   cloudApplyingRemote=true;
+   try{
+    data=normalizeLearningData(row.payload);
+    const snapshot=JSON.stringify(data);
+    persistCloudSnapshotLocally(snapshot,remoteStamp||Date.now());
+   }finally{cloudApplyingRemote=false;}
+   cloudLastSyncedAt=remoteStamp;
+   setCloudStatus("Your saved cloud information has been restored · "+new Date(remoteStamp||Date.now()).toLocaleString(),true);
+  }
+ }
+ cloudReady=true;
+ renderAll();
+ loadQuiz();
+ renderInterviewStats();
+}
+async function initializeCloudStorage(){
+ const configured=await createCloudClient();
+ if(!configured)return;
+ try{
+  const {data:{session},error}=await cloudClient.auth.getSession();
+  if(error)throw error;
+  if(session){
+   const email=getCloudEmailFromSession(session);
+   if(email!==AUTHORIZED_CLOUD_EMAIL){
+    await cloudClient.auth.signOut();
+    cloudUser=null;cloudReady=false;
+    setCloudStatus("This browser is connected to a different email. Only the authorized Hemanth email can access this cloud.");
+    return;
+   }
+   cloudUser=session.user;
+   await syncCloudOnConnect();
+  }else{
+   cloudUser=null;cloudReady=false;
+   setCloudStatus("Your website is open. Connect private cloud storage once from this section to restore and sync information across devices.");
+  }
+ }catch(error){
+  cloudUser=null;cloudReady=false;
+  console.error("Cloud initialization failed",error);
+  setCloudStatus("Cloud connection failed: "+(error.message||"check your Supabase setup and internet connection"));
+ }
+}
+async function sendCloudVerificationCode(){
+ if(!(await createCloudClient()))return;
+ const status=document.getElementById("cloudStorageStatus");
+ try{
+  const {error}=await cloudClient.auth.signInWithOtp({
+   email:AUTHORIZED_CLOUD_EMAIL,
+   options:{shouldCreateUser:true}
+  });
+  if(error)throw error;
+  const otp=document.getElementById("cloudOtpArea");if(otp)otp.classList.remove("hidden");
+  if(status)status.textContent="A verification code has been sent to "+AUTHORIZED_CLOUD_EMAIL+". Enter the code below to connect your private cloud.";
+  const input=document.getElementById("cloudOtpInput");if(input)input.focus();
+ }catch(error){
+  if(status)status.textContent="Could not send verification code: "+(error.message||"please try again");
+ }
+}
+async function verifyCloudVerificationCode(){
+ if(!cloudClient)return;
+ const input=document.getElementById("cloudOtpInput");
+ const token=String(input?.value||"").trim();
+ if(!/^\d{6}$/.test(token)){alert("Enter the 6-digit code sent to "+AUTHORIZED_CLOUD_EMAIL+".");return;}
+ setCloudStatus("Verifying your email…");
+ try{
+  const {data:authData,error}=await cloudClient.auth.verifyOtp({email:AUTHORIZED_CLOUD_EMAIL,token,type:"email"});
+  if(error)throw error;
+  const email=getCloudEmailFromSession(authData.session);
+  if(email!==AUTHORIZED_CLOUD_EMAIL){await cloudClient.auth.signOut();throw new Error("The verified email does not match Hemanth’s authorized email.");}
+  cloudUser=authData.user;cloudReady=false;
+  await syncCloudOnConnect();
+  const otp=document.getElementById("cloudOtpArea");if(otp)otp.classList.add("hidden");
+  if(input)input.value="";
+  alert("Private cloud connected. Your saved Study Store information is now synchronized.");
+ }catch(error){
+  setCloudStatus("Verification or cloud sync failed: "+(error.message||"please check the code and database setup"));
+ }
+}
+async function retryCloudConnectionCheck(){
+ if(!cloudClient){await initializeCloudStorage();return;}
+ try{
+  const {data:{session},error}=await cloudClient.auth.getSession();
+  if(error)throw error;
+  if(session && getCloudEmailFromSession(session)===AUTHORIZED_CLOUD_EMAIL){cloudUser=session.user;await syncCloudOnConnect();}
+  else{setCloudStatus("Cloud is not connected in this browser. Use Connect Private Cloud to verify the authorized email.");}
+ }catch(error){setCloudStatus("Cloud check failed: "+(error.message||"please try again"));}
+}
+function scheduleCloudSave(){
+ if(!cloudReady||!cloudUser||cloudApplyingRemote)return;
+ if(cloudSaveTimer)clearTimeout(cloudSaveTimer);
+ setCloudStatus("Saving changes to private cloud…",true);
+ cloudSaveTimer=setTimeout(()=>{cloudSaveTimer=null;pushLatestDataToCloud();},900);
+}
+async function pushLatestDataToCloud(){
+ if(!cloudReady||!cloudUser||cloudApplyingRemote)return;
+ if(cloudSaveRunning){cloudSaveQueued=true;return;}
+ cloudSaveRunning=true;
+ try{
+  const snapshot=normalizeLearningData(data);
+  await writeCloudRecord(snapshot,localSavedTimestamp()||Date.now());
+ }catch(error){
+  console.error("Private cloud save failed",error);
+  setCloudStatus("Cloud save failed: "+(error.message||"your local copy is still saved; check internet and retry"));
+ }finally{
+  cloudSaveRunning=false;
+  if(cloudSaveQueued){cloudSaveQueued=false;setTimeout(pushLatestDataToCloud,150);}
+ }
+}
+
+function saveData(){
+ let snapshot;
+ try{snapshot=JSON.stringify(normalizeLearningData(data));}
+ catch(e){console.error("Unable to prepare Study Store data for saving",e);return false;}
+ const savedAt=Date.now();
+ let localSaved=false;
+ try{
+  localStorage.setItem(userDataKey(),snapshot);
+  localStorage.setItem(userDataMetaKey(),JSON.stringify({savedAt}));
+  localSaved=true;
+ }catch(e){console.warn("Local storage save failed; attempting browser database backup",e);}
+
+ const notice=document.getElementById("saveStatus");
+ if(notice)notice.textContent=localSaved?"Saved on this device ✓":"Saving backup…";
+ writePersistenceRecord(snapshot,savedAt).then(()=>{
+  if(notice)notice.textContent="Saved on this device ✓";
+ }).catch(error=>{
+  console.info("Secondary browser database save unavailable",error);
+  if(notice)notice.textContent=localSaved?"Saved in browser storage ✓":"Save failed — download a backup.";
+ });
+ scheduleCloudSave();
+ return localSaved;
+}
+
+async function requestPersistentBrowserStorage(){
+ try{
+  if(navigator.storage && typeof navigator.storage.persist==="function"){
+   const alreadyPersistent=await navigator.storage.persisted();
+   if(!alreadyPersistent)await navigator.storage.persist();
+  }
+ }catch(e){console.info("Persistent storage permission is managed by the browser",e);}
+}
+
+let autosaveTimer=null;
+function scheduleDataSave(){
+ if(autosaveTimer) clearTimeout(autosaveTimer);
+ autosaveTimer=setTimeout(()=>{saveData();autosaveTimer=null;},350);
+}
+
+async function initializeApp(){
+ loadData();
+ await restoreIndexedDBIfNewer();
+ // Restore the private cloud record first, if this browser has a valid Hemanth session.
+ await initializeCloudStorage();
+ // Write a canonical local and IndexedDB copy after the cloud/local reconciliation.
+ saveData();
+ renderAll();
+ loadQuiz();
+ renderInterviewStats();
+ await requestPersistentBrowserStorage();
+}
+
+/* NAVIGATION — welcome cards are the main navigation */
+function openWelcomePage(id){
+ showPage(id);
+}
+function showPage(id){
+ const selectedPage=document.getElementById(id);
+ if(!selectedPage)return;
+
+ // Save an open topic notepad before switching sections, so a quick Back click cannot lose a draft.
+ if(typeof activeNotepadTopicId!=="undefined" && activeNotepadTopicId){
+  const editor=document.getElementById("topicNotepadText");
+  const topic=data.topics.find(t=>String(t.id)===String(activeNotepadTopicId));
+  if(editor && topic){topic.notepadContent=editor.value;topic.notepadSavedAt=new Date().toISOString();saveData();}
+  if(id!=="subjects")activeNotepadTopicId=null;
+ }
+
+ // Show only the selected page. Every inner learning section opens full-screen.
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active","section-fullscreen"));
+ selectedPage.classList.add("active");
+ if(id!=="dashboard")selectedPage.classList.add("section-fullscreen");
+ if(id==="subjects")renderSubjects();
+ if(id==="quiz"){populateQuizSelectors();renderQuizHistory();}
+
+ // Add one Back to Dashboard button to every inner section.
+ document.querySelectorAll(".page").forEach(page=>{
+   let back=page.querySelector(":scope > .section-back-button");
+   if(page.id==="dashboard"){
+     if(back)back.remove();
+   }else if(!back){
+     back=document.createElement("button");
+     back.type="button";
+     back.className="section-back-button";
+     back.innerHTML="&#8592; Back to Dashboard";
+     back.addEventListener("click",()=>showPage("dashboard"));
+     page.insertBefore(back,page.firstChild);
+   }
+ });
+
+ if(id==="interview")renderInterviewStats();
+ if(id==="spelling")renderSpellingAcademy();
+ if(id==="store")renderStudyStore();
+}
+
+function renderAll(){
+ renderDashboard();
+ renderStudyStore();
+ renderSubjects();
+ renderNotes();
+ renderSchedule();
+ renderGoals();
+ updateSelects();
+ populateQuizSelectors();
+ renderQuizHistory();
+}
+
+function safe(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+/* SUBJECTS AND TOPICS */
+function addSubject(){
+ const name=document.getElementById("subjectName").value.trim();
+ if(!name)return alert("Enter a subject name.");
+ if(data.subjects.some(s=>s.name.toLowerCase()===name.toLowerCase()))
+  return alert("This subject already exists.");
+ data.subjects.push({id:Date.now()+Math.random(),name});
+ document.getElementById("subjectName").value="";
+ saveData();renderAll();
+}
+
+function addTopic(){
+ const subjectId=document.getElementById("topicSubject").value;
+ const name=document.getElementById("topicName").value.trim();
+ if(!subjectId)return alert("Please add a subject first.");
+ if(!name)return alert("Enter a topic name.");
+ if(data.topics.some(t=>String(t.subjectId)===String(subjectId)&&String(t.name).toLowerCase()===name.toLowerCase()))
+  return alert("This topic already exists in that subject.");
+ // Append the new topic. Existing subjects, topics and notes are kept unchanged.
+ data.topics.push({id:Date.now()+Math.random(),subjectId,name,done:false,notepadContent:"",notepadSavedAt:null});
+ document.getElementById("topicName").value="";
+ saveData();renderAll();
+}
+
+function toggleTopic(id){
+ const t=data.topics.find(x=>String(x.id)===String(id));
+ if(t)t.done=!t.done;
+ saveData();renderAll();
+}
+
+function deleteTopic(id){
+ // Delete immediately: native confirmation popups can be suppressed in some hosted/webview browsers.
+ const topicId=String(id);
+ const existing=data.topics.find(t=>String(t.id)===topicId);
+ if(!existing){console.warn("Topic was not found for deletion:",topicId);return false;}
+ data.topics=data.topics.filter(t=>String(t.id)!==topicId);
+ data.notes=(Array.isArray(data.notes)?data.notes:[]).filter(n=>String(n.topicId)!==topicId);
+ if(String(activeNotepadTopicId)===topicId)activeNotepadTopicId=null;
+ saveData();
+ renderAll();
+ if(activeSubjectId)renderSubjectDetail(activeSubjectId);
+ return true;
+}
+
+function deleteSubject(id){
+ // Delete immediately and remove its child topics and their notes together.
+ const subjectId=String(id);
+ const existing=data.subjects.find(s=>String(s.id)===subjectId);
+ if(!existing){console.warn("Subject was not found for deletion:",subjectId);return false;}
+ const childTopicIds=new Set(data.topics.filter(t=>String(t.subjectId)===subjectId).map(t=>String(t.id)));
+ data.subjects=data.subjects.filter(s=>String(s.id)!==subjectId);
+ data.topics=data.topics.filter(t=>String(t.subjectId)!==subjectId);
+ data.notes=(Array.isArray(data.notes)?data.notes:[]).filter(n=>!childTopicIds.has(String(n.topicId)));
+ if(String(activeSubjectId)===subjectId)activeSubjectId=null;
+ if(activeNotepadTopicId && childTopicIds.has(String(activeNotepadTopicId)))activeNotepadTopicId=null;
+ saveData();
+ renderAll();
+ return true;
+}
+
+let activeSubjectId = null;
+let activeNotepadTopicId = null;
+
+function renderSubjects(){
+ const box=document.getElementById("subjectList");
+ const detail=document.getElementById("subjectDetail");
+ const list=document.getElementById("subjectList");
+ if(!data.subjects.length){box.innerHTML="";detail.classList.add("hidden");}
+ else {
+  const visible=data.subjects;
+  box.innerHTML=visible.map(s=>{
+   const count=data.topics.filter(t=>String(t.subjectId)===String(s.id)).length;
+   return `<div class="subject-card" role="button" tabindex="0" onclick="openSubject('${s.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSubject('${s.id}')}" >
+    <div class="subject-card-icon">📚</div><h3>${safe(s.name)}</h3>
+    <p>${count} topic${count===1?'':'s'}</p><span>Open topics →</span>
+    <button type="button" class="danger subject-delete" aria-label="Delete subject ${safe(s.name)}" onclick="event.stopPropagation();deleteSubject('${s.id}')">🗑 Delete Subject</button>
+   </div>`;
+  }).join("");
+ }
+ if(activeSubjectId && data.subjects.some(s=>String(s.id)===String(activeSubjectId))) renderSubjectDetail(activeSubjectId);
+ else { activeSubjectId=null; detail.classList.add("hidden"); list.classList.remove("hidden"); }
+ updateSelects();
+}
+
+function openSubject(id){
+ activeSubjectId=String(id);
+ renderSubjectDetail(id);
+}
+
+function renderSubjectDetail(id){
+ const subject=data.subjects.find(s=>String(s.id)===String(id));
+ const detail=document.getElementById("subjectDetail");
+ const list=document.getElementById("subjectList");
+ if(!subject){detail.classList.add("hidden");return;}
+ const topics=data.topics.filter(t=>String(t.subjectId)===String(id));
+ list.classList.add("hidden");
+ detail.classList.remove("hidden");
+ detail.innerHTML=`<button class="secondary" onclick="closeSubjectDetail()">← Back to Subjects</button>
+  <h2 style="margin-top:18px">📘 ${safe(subject.name)}</h2>
+  <p class="small">${topics.length} topic${topics.length===1?'':'s'} in this subject</p>
+  <div class="subject-add-topic"><input id="detailTopicName" placeholder="Enter a topic name for ${safe(subject.name)}" onkeydown="if(event.key==='Enter')addTopicForSubject('${subject.id}')">
+  <button onclick="addTopicForSubject('${subject.id}')">+ Add Topic</button></div>
+  <div class="subject-topic-list">${topics.length?topics.map(t=>`<div class="item subject-topic-item">
+   <label><input type="checkbox" style="width:auto" ${t.done?'checked':''} onchange="toggleTopic('${t.id}')"> <button class="topic-open-btn" onclick="openTopicNotepad('${t.id}')">${safe(t.name)} 📝</button></label>
+   <div class="row"><button type="button" class="danger" aria-label="Delete topic ${safe(t.name)}" onclick="event.stopPropagation();deleteTopic('${t.id}')">🗑 Delete Topic</button></div>
+  </div>`).join(''):"<p class='small'>No topics yet. Add your first topic above.</p>"}</div>
+  ${activeNotepadTopicId && topics.some(t=>String(t.id)===String(activeNotepadTopicId)) ? renderTopicNotepad(topics.find(t=>String(t.id)===String(activeNotepadTopicId))) : ''}`;
+}
+
+function renderTopicNotepad(topic){
+ return `<div class="topic-notepad" id="topicNotepad">
+  <h3>📝 ${safe(topic.name)} — Notepad</h3>
+  <p class="small">Write your information here, then click Save Notes. Your notes are stored separately for this topic and will appear again whenever you reopen it.</p>
+  <textarea id="topicNotepadText" oninput="updateTopicNotepadDraft('${topic.id}',this.value)" placeholder="Start writing your notes, examples, definitions and important points...">${safe(topic.notepadContent||'')}</textarea>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px">
+   <button onclick="saveTopicNotepad('${topic.id}')">💾 Save Notes</button>
+   <button class="secondary" onclick="closeTopicNotepad()">Close Notepad</button>
+   <button class="secondary" onclick="saveNotepadAndGoDashboard('${topic.id}')">← Back to Dashboard</button>
+   <span class="topic-note-status">${topic.notepadSavedAt?'Saved ✓':'Not saved yet'}</span>
+  </div>
+ </div>`;
+}
+function openTopicNotepad(id){
+ activeNotepadTopicId=String(id);
+ renderSubjectDetail(activeSubjectId);
+ setTimeout(()=>{const el=document.getElementById('topicNotepadText');if(el)el.focus();},0);
+}
+function updateTopicNotepadDraft(id,content){
+ const topic=data.topics.find(t=>String(t.id)===String(id));
+ if(!topic)return;
+ topic.notepadContent=content;
+ topic.notepadSavedAt=new Date().toISOString();
+ const status=document.querySelector("#topicNotepad .topic-note-status");
+ if(status)status.textContent="Saving…";
+ scheduleDataSave();
+ if(status)setTimeout(()=>{if(status.isConnected)status.textContent="Auto-saved ✓";},450);
+}
+
+function saveTopicNotepad(id){
+ const topic=data.topics.find(t=>String(t.id)===String(id));
+ const editor=document.getElementById('topicNotepadText');
+ if(!topic||!editor)return;
+ topic.notepadContent=editor.value;
+ topic.notepadSavedAt=new Date().toISOString();
+ saveData();
+ renderSubjectDetail(activeSubjectId);
+ alert('Notes saved successfully for this topic.');
+}
+function closeTopicNotepad(){
+ activeNotepadTopicId=null;
+ renderSubjectDetail(activeSubjectId);
+}
+function saveNotepadAndGoDashboard(id){
+ const topic=data.topics.find(t=>String(t.id)===String(id));
+ const editor=document.getElementById('topicNotepadText');
+ if(topic&&editor){
+  topic.notepadContent=editor.value;
+  topic.notepadSavedAt=new Date().toISOString();
+  saveData();
+ }
+ activeNotepadTopicId=null;
+ showPage('dashboard');
+}
+
+function closeSubjectDetail(){
+ activeSubjectId=null;
+ document.getElementById("subjectDetail").classList.add("hidden");
+ document.getElementById("subjectList").classList.remove("hidden");
+}
+
+function addTopicForSubject(subjectId){
+ const input=document.getElementById("detailTopicName");
+ const name=input?.value.trim();
+ if(!name)return alert("Enter a topic name.");
+ if(data.topics.some(t=>String(t.subjectId)===String(subjectId)&&t.name.toLowerCase()===name.toLowerCase()))return alert("This topic already exists in this subject.");
+ data.topics.push({id:Date.now()+Math.random(),subjectId,name,done:false,notepadContent:'',notepadSavedAt:null});
+ activeNotepadTopicId=null;
+ saveData();renderAll();renderSubjectDetail(subjectId);
+}
+
+function updateSelects(){
+ // The old separate Add Topic dropdown was removed; topics are now added inside each subject.
+ // Keep this helper safe for older saved versions that may still contain the old form.
+ const subjectSelect=document.getElementById("topicSubject");
+ if(!subjectSelect)return;
+ const subjectOptions=data.subjects.map(s=>`<option value="${s.id}">${safe(s.name)}</option>`).join("");
+ subjectSelect.innerHTML=subjectOptions||"<option value=''>Add a subject first</option>";
+}
+
+/* NOTES */
+function openTopicNote(id){
+ showPage("notes");
+ document.getElementById("noteTopic").value=id;
+ const note=data.notes.find(n=>String(n.topicId)===String(id));
+ document.getElementById("noteTitle").value=note?note.title:"";
+ document.getElementById("noteContent").value=note?note.content:"";
+}
+
+function saveNote(){
+ const topicId=document.getElementById("noteTopic").value;
+ const title=document.getElementById("noteTitle").value.trim();
+ const content=document.getElementById("noteContent").value.trim();
+ if(!topicId)return alert("Please add a topic first.");
+ if(!title&&!content)return alert("Write a note first.");
+ let note=data.notes.find(n=>String(n.topicId)===String(topicId));
+ if(note){note.title=title;note.content=content;}
+ else data.notes.push({id:Date.now(),topicId,title,content});
+ saveData();renderAll();alert("Notes saved successfully!");
+}
+
+function renderNotes(){
+ const box=document.getElementById("notesList");
+ if(!box)return;
+ const grouped=new Map();
+ data.notes.forEach(n=>{
+  const topic=data.topics.find(t=>String(t.id)===String(n.topicId));
+  const subject=topic?data.subjects.find(s=>String(s.id)===String(topic.subjectId)):null;
+  const subjectName=subject?subject.name:"Other / Unassigned";
+  if(!grouped.has(subjectName))grouped.set(subjectName,[]);
+  grouped.get(subjectName).push({note:n,topic});
+ });
+ box.innerHTML=Array.from(grouped.entries()).map(([subjectName,items])=>
+  `<div class="notes-subject-group"><h2>📘 ${safe(subjectName)}</h2>`+
+  items.map(({note:n,topic:t})=>`<div class="item">
+   <h3>${safe(n.title||"Untitled note")}</h3>
+   <p class="small">Topic: ${safe(t?t.name:"Topic deleted")}</p>
+   <p>${safe(n.content).replace(/\n/g,"<br>")}</p>
+   <button class="secondary" onclick="editNote('${n.id}')">Edit</button>
+   <button class="danger" onclick="deleteNote('${n.id}')">Delete</button>
+  </div>`).join("")+`</div>`
+ ).join("")||"<p>No notes saved yet. Open a subject, choose a topic, and use Write Notes to create subject-wise notes.</p>";
+}
+function editNote(id){
+ const n=data.notes.find(x=>String(x.id)===String(id));
+ if(n)openTopicNote(n.topicId);
+}
+function deleteNote(id){
+ if(!confirm("Delete this note?"))return;
+ data.notes=data.notes.filter(n=>String(n.id)!==String(id));
+ saveData();renderAll();
+}
+function downloadNotes(){
+ const text=data.notes.map(n=>n.title+"\n\n"+n.content).join("\n\n----------------\n\n");
+ downloadFile("study-notes.txt",text,"text/plain");
+}
+
+/* ASSIGNMENTS */
+function addAssignment(){
+ const title=document.getElementById("assignmentTitle").value.trim();
+ if(!title)return alert("Enter assignment title.");
+ data.assignments.push({
+  id:Date.now(),title,
+  description:document.getElementById("assignmentDescription").value.trim(),
+  date:document.getElementById("assignmentDate").value,
+  done:false
+ });
+ document.getElementById("assignmentTitle").value="";
+ document.getElementById("assignmentDescription").value="";
+ saveData();renderAll();
+}
+function toggleAssignment(id){
+ const a=data.assignments.find(x=>String(x.id)===String(id));
+ if(a)a.done=!a.done;
+ saveData();renderAll();
+}
+function deleteAssignment(id){
+ if(!confirm("Delete this assignment?"))return;
+ data.assignments=data.assignments.filter(a=>String(a.id)!==String(id));
+ saveData();renderAll();
+}
+function renderAssignments(){
+ const assignmentList=document.getElementById("assignmentList");
+ if(!assignmentList)return;
+ assignmentList.innerHTML=data.assignments.map(a=>
+ `<div class="item"><label><input type="checkbox" style="width:auto" ${a.done?"checked":""} onchange="toggleAssignment('${a.id}')"> <strong>${safe(a.title)}</strong></label>
+ <p>${safe(a.description)}</p><p class="small">Due: ${safe(a.date||"No due date")}</p>
+ <button class="danger" onclick="deleteAssignment('${a.id}')">Delete</button></div>`
+ ).join("")||"<p>No assignments added.</p>";
+}
+
+/* SCHEDULE */
+function addClass(){
+ const day=document.getElementById("classDay").value;
+ const time=document.getElementById("classTime").value.trim();
+ const subject=document.getElementById("classSubject").value.trim();
+ if(!time||!subject)return alert("Enter class time and subject.");
+ data.schedule.push({id:Date.now(),day,time,subject});
+ document.getElementById("classTime").value="";
+ document.getElementById("classSubject").value="";
+ saveData();renderSchedule();
+}
+function deleteClass(id){
+ data.schedule=data.schedule.filter(c=>String(c.id)!==String(id));
+ saveData();renderSchedule();
+}
+function renderSchedule(){
+ const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+ document.getElementById("scheduleList").innerHTML=days.map(day=>{
+  const classes=data.schedule.filter(c=>c.day===day);
+  return `<div class="item"><h3>${day}</h3>${classes.map(c=>
+   `<p>${safe(c.time)} — ${safe(c.subject)} <button class="danger" onclick="deleteClass('${c.id}')">Delete</button></p>`
+  ).join("")||"<p class='small'>No classes scheduled.</p>"}</div>`;
+ }).join("");
+}
+
+/* GOALS */
+function addGoal(){
+ const text=document.getElementById("goalInput").value.trim();
+ if(!text)return alert("Enter a goal.");
+ data.goals.push({id:Date.now(),text,done:false,date:new Date().toISOString().slice(0,10)});
+ document.getElementById("goalInput").value="";
+ saveData();renderGoals();
+}
+function toggleGoal(id){
+ const g=data.goals.find(x=>String(x.id)===String(id));
+ if(g)g.done=!g.done;
+ saveData();renderGoals();
+}
+function deleteGoal(id){
+ data.goals=data.goals.filter(g=>String(g.id)!==String(id));
+ saveData();renderGoals();
+}
+function renderGoals(){
+ const goals=Array.isArray(data.goals)?data.goals:[];
+ const completed=goals.filter(g=>!!g.done).length;
+ const remaining=goals.length-completed;
+ const percent=goals.length?Math.round(completed/goals.length*100):0;
+ const setText=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+ setText("goalTotalCount",goals.length);
+ setText("goalCompletedCount",completed);
+ setText("goalRemainingCount",remaining);
+ setText("goalProgressPercent",percent+"%");
+ setText("goalListStatus",goals.length?`${completed} of ${goals.length} completed`:"No goals added yet");
+ const fill=document.getElementById("goalProgressFill");if(fill)fill.style.width=percent+"%";
+ const list=document.getElementById("goalList");
+ if(list){
+  list.innerHTML=goals.length?goals.map(g=>{
+   const id=String(g.id).replace(/[^a-zA-Z0-9_-]/g,"");
+   const done=!!g.done;
+   return `<article class="goal-card ${done?"is-complete":""}">
+    <div class="goal-card-top"><span>🎯 Learning Mission</span><span class="goal-status-pill ${done?"done":""}">${done?"✓ COMPLETED":"○ NOT COMPLETED"}</span></div>
+    <p class="goal-card-text">${safe(g.text)}</p>
+    <div class="goal-card-footer"><span class="goal-date">Added: ${safe(g.date||"Today")}</span>
+     <div class="row" style="gap:7px"><button type="button" class="goal-complete-btn" onclick="toggleGoal('${id}')">${done?"↶ Mark Pending":"✓ Mark Complete"}</button><button type="button" class="danger goal-delete-btn" onclick="deleteGoal('${id}')">🗑 Delete</button></div>
+    </div>
+   </article>`;
+  }).join(""):`<div class="empty-state small">No learning goals yet. Add your first goal above!</div>`;
+ }
+ const tracker=document.getElementById("weeklyTracker");
+ if(tracker){
+  const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+  const today=new Date();
+  const mondayOffset=(today.getDay()+6)%7;
+  const monday=new Date(today);monday.setDate(today.getDate()-mondayOffset);
+  tracker.innerHTML=days.map((day,index)=>{
+   const date=new Date(monday);date.setDate(monday.getDate()+index);
+   const key=date.toISOString().slice(0,10);
+   const dayGoals=goals.filter(g=>g.date===key);
+   const dayDone=dayGoals.filter(g=>g.done).length;
+   return `<div class="weekly-goal-day"><strong>${day}</strong><span>${dayDone}/${dayGoals.length} goals completed</span></div>`;
+  }).join("");
+ }
+}
+
+/* USER INFORMATION — shown on the Welcome Dashboard */
+function updateUserInformation(){
+ const displayName="Hemanth";
+ const avatar=displayName.charAt(0).toUpperCase();
+ const nameNode=document.getElementById("userInfoName");
+ const infoNode=document.getElementById("userInfoEmail");
+ const joinedNode=document.getElementById("userInfoJoined");
+ const avatarNode=document.getElementById("userInfoAvatar");
+ if(nameNode)nameNode.textContent="Welcome, "+displayName;
+ if(infoNode)infoNode.textContent="Personal learning workspace";
+ if(avatarNode)avatarNode.textContent=avatar;
+ if(joinedNode)joinedNode.textContent="Your Study Store profile";
+}
+
+/* DASHBOARD */
+function renderDashboard(){
+ updateUserInformation();
+}
+
+/* CREATIVE SUBJECT & TOPIC QUIZ */
+let activeQuizQuestions=[];
+let quizSubmitted=false;
+let activeQuizContext="Quiz Practice";
+const quizBank={
+ python:[
+  {topic:['variable','data type'],level:'easy',q:'🧩 Mission: store the learner name "Ravi" so it can be reused. Which line is valid Python?',a:['learner = "Ravi"','string learner = "Ravi"','"Ravi" = learner','let learner := "Ravi"'],c:0,why:'Python variables are created by assignment; no type declaration is required.'},
+  {topic:['operator'],level:'easy',q:'🔍 Debug check: which operator tests whether two values are equal?',a:['=','==','!=','>='],c:1,why:'The double-equals operator compares values; a single equals assigns a value.'},
+  {topic:['if','condition','control flow'],level:'easy',q:'🚦 A program should print "Pass" only when mark is at least 40. Which condition belongs in the if statement?',a:['mark > 40','mark >= 40','mark = 40','mark <= 40'],c:1,why:'At least 40 includes 40, so greater-than-or-equal is required.'},
+  {topic:['loop','for','while'],level:'easy',q:'🔁 You need to visit every name in a list called names. Which loop is the natural choice?',a:['for name in names:','if name in names:','def name in names:','print name in names:'],c:0,why:'A for loop iterates through each item in an iterable such as a list.'},
+  {topic:['list'],level:'easy',q:'🎒 Add the value 25 to the end of a list called marks. Which statement is correct?',a:['marks.add(25)','marks.append(25)','marks.push(25)','marks.insertEnd(25)'],c:1,why:'append() adds one item to the end of a Python list.'},
+  {topic:['tuple'],level:'medium',q:'🔐 A coordinate pair must not be changed after creation. Which Python collection fits best?',a:['List','Tuple','Set','Dictionary'],c:1,why:'Tuples are immutable sequences, making them suitable for fixed coordinate pairs.'},
+  {topic:['dictionary','dict'],level:'medium',q:'🗂️ A student record stores a value under the key "name". How do you read it from student?',a:['student.name','student["name"]','student(name)','student->name'],c:1,why:'Dictionary values are accessed using their key in square brackets.'},
+  {topic:['function','def'],level:'easy',q:'🧰 Which keyword begins a function definition in Python?',a:['func','define','def','function'],c:2,why:'Python uses the def keyword to define a function.'},
+  {topic:['lambda'],level:'medium',q:'⚡ Which expression creates a lambda that returns the square of x?',a:['lambda x: x * x','lambda: x * x','def lambda(x): x*x','lambda x = x*x'],c:0,why:'A lambda expression has parameters before the colon and its expression after it.'},
+  {topic:['string','slicing','index'],level:'medium',q:'✂️ For word = "PYTHON", what does word[1:4] return?',a:['PYT','YTH','YTHO','THO'],c:1,why:'Slicing includes index 1 and stops before index 4, producing YTH.'},
+  {topic:['file','handling'],level:'medium',q:'📁 Which mode opens a text file for adding content at the end without deleting existing text?',a:['"w"','"r"','"a"','"x"'],c:2,why:'Append mode a writes new content at the end of an existing file.'},
+  {topic:['exception','error','try'],level:'medium',q:'🧯 Which block handles an exception raised inside a try block?',a:['except','finally only','repeat','rescue'],c:0,why:'An except block catches and handles matching exceptions.'},
+  {topic:['numpy','array'],level:'medium',q:'📊 Which NumPy function creates an array from a Python list?',a:['np.table()','np.array()','np.list()','np.frame()'],c:1,why:'np.array() converts sequence-like input into a NumPy array.'},
+  {topic:['pandas','dataframe'],level:'medium',q:'📈 Which pandas function reads an Excel workbook into a DataFrame?',a:['pd.read_csv()','pd.open_excel()','pd.read_excel()','pd.load_xlsx()'],c:2,why:'pandas read_excel() imports spreadsheet data into a DataFrame.'},
+  {topic:['comprehension'],level:'hard',q:'🧠 What list is produced by [n*n for n in [1,2,3] if n > 1]?',a:['[1, 4, 9]','[4, 9]','[2, 3]','[1, 2, 3]'],c:1,why:'The condition keeps 2 and 3, and the expression squares them.'}
+ ],
+ mysql:[
+  {topic:['select','query','clauses'],level:'easy',q:'🗄️ Mission: display every column and row from Employees. Which query is correct?',a:['SELECT ALL Employees;','SELECT * FROM Employees;','SHOW Employees *;','GET * IN Employees;'],c:1,why:'SELECT * FROM table_name returns all columns from the table.'},
+  {topic:['where','filter','operator'],level:'easy',q:'🔎 Show only employees whose salary is greater than 40000. Which clause filters rows?',a:['ORDER BY salary > 40000','WHERE salary > 40000','GROUP BY salary > 40000','JOIN salary > 40000'],c:1,why:'WHERE filters rows according to a condition.'},
+  {topic:['order','sorting'],level:'easy',q:'📊 Arrange employees from highest salary to lowest. Which ending is correct?',a:['ORDER BY salary ASC','SORT salary DESC','ORDER BY salary DESC','GROUP BY salary DESC'],c:2,why:'DESC sorts values in descending order.'},
+  {topic:['insert','dml'],level:'easy',q:'➕ Which SQL command adds a new row to a table?',a:['INSERT INTO','ALTER TABLE','UPDATE TABLE','CREATE INDEX'],c:0,why:'INSERT INTO adds new records to a table.'},
+  {topic:['update'],level:'medium',q:'🛠️ You need to change one employee salary. What must you normally include to target the intended row?',a:['A WHERE condition using a key','DROP TABLE','ORDER BY only','A second SELECT keyword'],c:0,why:'A suitable WHERE condition limits which rows are updated; without it, all rows may change.'},
+  {topic:['delete'],level:'medium',q:'⚠️ Which command removes selected rows while keeping the table structure?',a:['DROP TABLE','DELETE FROM with WHERE','TRUNCATE DATABASE','REMOVE COLUMN'],c:1,why:'DELETE removes rows; a WHERE clause can restrict which rows are deleted.'},
+  {topic:['join','inner join'],level:'medium',q:'🔗 You want only rows with matching keys in both Employees and Departments. Which join is appropriate?',a:['LEFT JOIN','CROSS JOIN','INNER JOIN','FULL TEXT JOIN'],c:2,why:'INNER JOIN returns rows that satisfy the join condition in both tables.'},
+  {topic:['primary key','constraint'],level:'medium',q:'🔑 Which constraint uniquely identifies each row and does not allow NULL values?',a:['DEFAULT','PRIMARY KEY','CHECK','FOREIGN KEY'],c:1,why:'A primary key uniquely identifies rows and cannot contain NULL.'},
+  {topic:['foreign key'],level:'medium',q:'🌉 What is the main purpose of a foreign key?',a:['To format dates','To link a row to a candidate key in another or the same table','To sort records','To encrypt a column'],c:1,why:'A foreign key enforces a relationship by referencing a key in a related table.'},
+  {topic:['group by','aggregate'],level:'medium',q:'🧮 Count employees in each department. Which clause groups rows by department?',a:['GROUP BY department_id','ORDER BY department_id','WHERE department_id','DISTINCT department_id'],c:0,why:'GROUP BY forms groups so aggregate functions can calculate per department.'},
+  {topic:['having'],level:'hard',q:'🎯 You want departments with more than five employees after grouping. Which clause filters groups?',a:['WHERE COUNT(*) > 5','HAVING COUNT(*) > 5','ORDER BY COUNT(*) > 5','LIMIT COUNT(*) > 5'],c:1,why:'HAVING filters grouped results, often using aggregate expressions.'},
+  {topic:['function','stored function'],level:'medium',q:'⚙️ In a MySQL stored function, which statement sends a value back to the caller?',a:['RETURN','PRINT','DISPLAY','OUTPUT ROW'],c:0,why:'RETURN provides the function result.'},
+  {topic:['case'],level:'medium',q:'🧭 A salary report needs labels for High, Medium and Low using conditions. Which SQL expression is designed for conditional branches?',a:['CASE','UNION','INDEX','COMMIT'],c:0,why:'CASE evaluates conditions and returns the result for the first matching branch.'},
+  {topic:['subquery'],level:'hard',q:'🪆 What is a subquery?',a:['A query nested inside another SQL statement','A database backup','A table constraint','A column alias only'],c:0,why:'A subquery is a query embedded within another statement.'},
+  {topic:['view'],level:'medium',q:'🪟 What is a SQL view commonly used for?',a:['A saved query presented like a virtual table','A physical monitor','A replacement for every index','A transaction log'],c:0,why:'A view stores a query definition and presents its result as a virtual table.'}
+ ],
+ genai:[
+  {topic:['artificial intelligence','ai'],level:'easy',q:'🤖 Which description best matches Artificial Intelligence?',a:['Machines performing tasks that typically require human-like intelligence','Only storing files in folders','A type of computer cable','A method for increasing screen brightness'],c:0,why:'AI concerns systems that perform tasks such as perception, reasoning or language processing.'},
+  {topic:['machine learning','ml'],level:'easy',q:'🧠 In supervised learning, what does a training dataset usually contain?',a:['Inputs with known target labels','Only unlabeled inputs','Only random numbers','No examples'],c:0,why:'Supervised learning trains from examples paired with target labels or values.'},
+  {topic:['regression','linear'],level:'medium',q:'📉 A model predicts house prices as continuous numbers. Which task is this?',a:['Classification','Regression','Clustering','Tokenization'],c:1,why:'Regression predicts continuous numeric values.'},
+  {topic:['classification'],level:'medium',q:'🏷️ Predicting whether an email is spam or not spam is an example of what?',a:['Regression','Classification','Dimensionality reduction','Sorting'],c:1,why:'The model chooses between discrete categories, so this is classification.'},
+  {topic:['neural network','deep learning'],level:'medium',q:'🕸️ What is a basic role of weights in a neural network?',a:['They control the strength of connections','They store the computer password','They replace all training data','They select the monitor size'],c:0,why:'Weights determine how strongly inputs and activations influence later computations.'},
+  {topic:['llm','large language model'],level:'easy',q:'💬 What is the main purpose of a Large Language Model?',a:['Understand and generate language patterns','Manage computer hardware temperature','Replace a database server','Create only spreadsheet formulas'],c:0,why:'LLMs learn patterns in language and can perform language tasks such as generation and summarization.'},
+  {topic:['prompt engineering','prompt'],level:'medium',q:'✍️ You want a more useful AI answer. Which prompt is generally strongest?',a:['Do it','Explain SQL joins for a beginner with one example table','Tell me everything','Answer quickly'],c:1,why:'A clear prompt states the topic, audience and expected form of the answer.'},
+  {topic:['token','tokenization'],level:'medium',q:'🔤 In language models, what is a token?',a:['A unit of text processed by the model','A computer monitor','A database primary key only','A type of image file'],c:0,why:'Tokens are pieces of text such as words, word parts or punctuation.'},
+  {topic:['embedding'],level:'hard',q:'🧭 What do text embeddings represent?',a:['Text as numerical vectors that capture useful relationships','Text as printed paper','A list of passwords','A database backup file'],c:0,why:'Embeddings map text into vectors so semantic relationships can be compared computationally.'},
+  {topic:['rag','retrieval augmented'],level:'hard',q:'📚 In Retrieval-Augmented Generation, what happens before the model writes a grounded answer?',a:['Relevant information is retrieved from a knowledge source','The model deletes the knowledge base','The user must retrain the model','All context is removed'],c:0,why:'RAG retrieves relevant external context and supplies it to the model for generation.'},
+  {topic:['mae','mean absolute error','evaluation'],level:'medium',q:'📏 What does Mean Absolute Error calculate?',a:['Average absolute difference between actual and predicted values','Average squared prediction','Number of model parameters','Percentage of missing rows'],c:0,why:'MAE averages the absolute errors between actual and predicted values.'},
+  {topic:['overfitting'],level:'hard',q:'🎯 A model performs very well on training data but poorly on unseen data. What is this called?',a:['Underfitting','Overfitting','Normalization','Tokenization'],c:1,why:'Overfitting occurs when a model learns training-specific patterns and generalizes poorly.'}
+ ],
+ english:[
+  {topic:['alphabet','letter'],level:'easy',q:'🔤 Which is the lowercase form of the capital letter G?',a:['q','g','j','c'],c:1,why:'The lowercase form of capital G is g.'},
+  {topic:['vocabulary','meaning','word'],level:'easy',q:'📖 What does the word "brave" mean?',a:['Afraid to act','Showing courage','Feeling sleepy','Moving slowly'],c:1,why:'Brave means showing courage when facing difficulty or danger.'},
+  {topic:['noun'],level:'easy',q:'🧩 In the sentence "The teacher opened the book", which word is a noun?',a:['opened','the','teacher','quickly'],c:2,why:'Teacher names a person, so it is a noun.'},
+  {topic:['pronoun'],level:'easy',q:'👤 Choose the pronoun that can replace "Riya" in "Riya is reading".',a:['She','They','We','It'],c:0,why:'She is a singular subject pronoun commonly used for Riya.'},
+  {topic:['verb'],level:'easy',q:'🏃 Identify the verb in "Birds fly across the sky".',a:['Birds','fly','across','sky'],c:1,why:'Fly describes the action performed by the birds.'},
+  {topic:['tense','past'],level:'medium',q:'⏳ Choose the correct past-tense sentence.',a:['She go to school yesterday.','She went to school yesterday.','She going to school yesterday.','She goes to school yesterday.'],c:1,why:'Went is the simple past form of go.'},
+  {topic:['article'],level:'easy',q:'🍎 Choose the correct article: "I ate ___ apple."',a:['a','an','the only','no article'],c:1,why:'An is used before a vowel sound; apple begins with a vowel sound.'},
+  {topic:['preposition'],level:'medium',q:'📍 Complete the sentence: "The keys are ___ the table."',a:['on','between','during','since'],c:0,why:'On indicates that the keys are resting on the surface of the table.'},
+  {topic:['sentence','grammar'],level:'medium',q:'✍️ Which sentence has correct subject-verb agreement?',a:['He play cricket.','He plays cricket.','He playing cricket.','He are play cricket.'],c:1,why:'A third-person singular subject in the simple present takes plays.'},
+  {topic:['spelling','writing'],level:'easy',q:'🔠 Choose the correctly spelled word.',a:['Beautifull','Beutiful','Beautiful','Beautifal'],c:2,why:'Beautiful is the standard spelling.'},
+  {topic:['adjective'],level:'medium',q:'🎨 Identify the adjective in "The bright moon appeared".',a:['moon','appeared','bright','the'],c:2,why:'Bright describes the noun moon.'},
+  {topic:['adverb'],level:'medium',q:'⚡ Which word is the adverb in "She speaks softly"?',a:['She','speaks','softly','none'],c:2,why:'Softly describes how she speaks.'}
+ ]
+};
+// Curated concept sets are expanded into 504 distinct question wordings per category.
+// Each item tests a category-specific term, purpose, use case, decision or best practice.
+const quizConcepts={
+ python:[
+ ['list','An ordered, mutable collection that allows duplicate values.',['tuple','set','string'],'A Python list preserves order, can be changed, and permits duplicates.'],
+ ['tuple','An ordered, immutable sequence.',['list','dictionary','set'],'A tuple cannot be modified after it is created.'],
+ ['dictionary','A key-value mapping used for fast lookup by key.',['list','tuple','range'],'Dictionaries store values associated with unique keys.'],
+ ['set','An unordered collection of unique elements.',['list','tuple','string'],'A set removes duplicate elements and supports set operations.'],
+ ['list comprehension','A concise syntax for building a list from an iterable.',['lambda','generator function','decorator'],'A list comprehension creates a list using an expression and optional filter.'],
+ ['lambda','A small anonymous function written as an expression.',['class','module','loop'],'Lambda expressions define short anonymous functions.'],
+ ['try-except','The construct used to catch and handle runtime exceptions.',['if-else','for-loop','with-open'],'The except block handles exceptions raised in the try block.'],
+ ['finally','A block that runs whether an exception occurs or not.',['else-if','continue','yield'],'Finally is commonly used for cleanup operations.'],
+ ['NumPy ndarray','The core multidimensional array structure in NumPy.',['DataFrame','Series','dictionary'],'NumPy ndarray stores homogeneous array data efficiently.'],
+ ['pandas DataFrame','A two-dimensional labelled tabular data structure.',['tuple','ndarray scalar','set'],'A DataFrame has labelled rows and columns.'],
+ ['read_excel','The pandas function used to load Excel files.',['read_json','to_csv','concat'],'pandas.read_excel imports spreadsheet data into a DataFrame.'],
+ ['function','A reusable named block of code defined with def.',['package','variable','operator'],'Functions package reusable logic and can accept parameters.']
+ ],
+ mysql:[
+ ['SELECT','The SQL statement used to retrieve rows from tables.',['INSERT','UPDATE','DROP'],'SELECT reads data from one or more tables.'],
+ ['WHERE','The clause that filters rows before grouping.',['HAVING','ORDER BY','LIMIT'],'WHERE applies row-level conditions.'],
+ ['GROUP BY','The clause that groups rows for aggregate calculations.',['ORDER BY','DISTINCT','WHERE'],'GROUP BY forms groups for COUNT, SUM and other aggregates.'],
+ ['HAVING','The clause that filters grouped results.',['WHERE','FROM','JOIN'],'HAVING is used to filter groups, often with aggregate conditions.'],
+ ['INNER JOIN','A join that returns rows with matching join keys on both sides.',['LEFT JOIN','CROSS JOIN','UNION'],'INNER JOIN returns matching records from both tables.'],
+ ['LEFT JOIN','A join that keeps every left-table row and matching right rows.',['INNER JOIN','CROSS JOIN','SELF JOIN'],'LEFT JOIN preserves unmatched rows from the left table.'],
+ ['PRIMARY KEY','A constraint that uniquely identifies each row and disallows NULL.',['FOREIGN KEY','DEFAULT','CHECK'],'A primary key uniquely identifies table records.'],
+ ['FOREIGN KEY','A constraint that enforces a relationship to a referenced key.',['INDEX','VIEW','TRIGGER'],'A foreign key helps maintain referential integrity.'],
+ ['INDEX','A database structure that can speed up data retrieval.',['TRIGGER','CURSOR','SCHEMA'],'Indexes can improve lookup speed, with storage and write costs.'],
+ ['CTE','A named temporary result defined with WITH for one statement.',['VIEW','TRIGGER','PROCEDURE'],'A common table expression improves query structure and readability.'],
+ ['COMMIT','The transaction command that makes changes permanent.',['ROLLBACK','SAVEPOINT','GRANT'],'COMMIT ends a transaction by saving its changes.'],
+ ['ROLLBACK','The transaction command that undoes uncommitted changes.',['COMMIT','GRANT','ANALYZE'],'ROLLBACK reverses changes in the current transaction.']
+ ],
+ genai:[
+ ['large language model','A neural model trained to understand and generate text.',['relational database','compiler','firewall'],'An LLM learns language patterns from large text datasets.'],
+ ['prompt engineering','The practice of designing clear inputs to guide model output.',['data indexing','model pruning','packet routing'],'Good prompts specify task, context, constraints and output format.'],
+ ['token','A unit of text processed by a language model.',['database row','image pixel only','CPU thread'],'Models process text as tokens rather than whole words only.'],
+ ['embedding','A numerical vector representation that captures semantic information.',['plain-text log','SQL key','HTML tag'],'Embeddings represent content in a vector space for similarity tasks.'],
+ ['RAG','A pattern that retrieves external context before generating an answer.',['model quantization','web scraping only','classification loss'],'RAG grounds generation in retrieved documents or records.'],
+ ['fine-tuning','Additional training that adapts a pretrained model to a task or style.',['prompt deletion','database normalization','token counting'],'Fine-tuning updates model parameters using task-specific examples.'],
+ ['temperature','A generation setting that influences output randomness.',['context length','embedding size','learning rate only'],'Higher temperature generally produces more varied outputs.'],
+ ['hallucination','A confident-sounding output that is unsupported or incorrect.',['data augmentation','overfitting metric','tokenization'],'Grounding and verification help reduce hallucinations.'],
+ ['system prompt','High-priority instructions that define assistant behavior and constraints.',['user attachment','vector index','training label'],'System instructions establish the assistant role and rules.'],
+ ['multimodal model','A model that can process or generate more than one data modality.',['text-only parser','SQL engine','cache server'],'Multimodal systems can work across text, image, audio or video.'],
+ ['zero-shot prompting','Asking a model to perform a task without examples in the prompt.',['few-shot prompting','fine-tuning','retrieval indexing'],'Zero-shot prompts describe the task without demonstrations.'],
+ ['evaluation dataset','A held-out set used to measure model performance.',['production cache','prompt template','token vocabulary'],'Evaluation data helps assess quality on examples not used for training.']
+ ],
+ agentai:[
+ ['AI agent','A system that observes context, chooses actions and works toward a goal.',['static report','database index','CSS stylesheet'],'An agent combines reasoning with actions in an environment.'],
+ ['tool calling','Allowing a model to invoke an external function or service.',['tokenization','fine-tuning','data labeling'],'Tool calls let an agent retrieve information or perform actions.'],
+ ['planning','Breaking a goal into ordered steps before execution.',['random sampling','compression','rendering'],'Planning helps an agent organize multi-step work.'],
+ ['memory','Stored context an agent can use across steps or sessions.',['temperature','pixel map','SQL join'],'Memory can preserve useful facts, state or prior results.'],
+ ['orchestration','Coordinating multiple agents, tools or workflow steps.',['stemming','normalization','compilation'],'Orchestration manages how components collaborate and hand off tasks.'],
+ ['human-in-the-loop','A design that requests human review or approval at key points.',['fully unattended mode','token masking','batch normalization'],'Human approval is valuable for sensitive or consequential actions.'],
+ ['guardrail','A rule or control that limits unsafe or invalid agent behavior.',['embedding','prompt example','database view'],'Guardrails constrain actions and validate inputs or outputs.'],
+ ['ReAct pattern','A loop that combines reasoning with actions and observations.',['pure classification','image segmentation','SQL transaction'],'ReAct alternates reasoning, tool action and observation.'],
+ ['state management','Tracking workflow data and progress between agent steps.',['font styling','model temperature','token splitting'],'State management helps workflows resume and maintain context.'],
+ ['multi-agent system','A system where multiple specialized agents collaborate.',['single static prompt','spreadsheet macro','single SQL query'],'Multiple agents can divide tasks and exchange results.'],
+ ['tool permission','An access rule defining which actions an agent is allowed to perform.',['temperature setting','vector dimension','token limit'],'Least-privilege permissions reduce the impact of mistakes.'],
+ ['fallback strategy','A safe alternative used when a tool or agent step fails.',['prompt injection','model pretraining','data leakage'],'Fallbacks support graceful recovery from errors.']
+ ],
+ powerbi:[
+ ['Power Query','The data connection and transformation experience in Power BI.',['DAX Studio only','Report canvas','Gateway cluster'],'Power Query uses steps to clean and shape data before loading.'],
+ ['DAX','The expression language used for calculations in the data model.',['M language','Python syntax','T-SQL only'],'DAX defines measures, calculated columns and calculated tables.'],
+ ['measure','A calculation evaluated in the current filter context.',['fixed source column','relationship','query step'],'Measures are evaluated dynamically as report context changes.'],
+ ['calculated column','A model column computed row by row during data refresh.',['visual filter','measure','bookmark'],'Calculated columns store a value for each row in the model.'],
+ ['star schema','A model design with fact tables connected to dimension tables.',['snowflake-only file','flat image','many-to-many by default'],'Star schemas support understandable and efficient analytical models.'],
+ ['relationship','A model link that propagates filters between related tables.',['visual theme','query parameter','bookmark'],'Relationships connect tables through matching columns.'],
+ ['filter context','The set of filters that affects a DAX calculation.',['row number','refresh schedule','workspace role'],'Filter context determines which data a measure evaluates.'],
+ ['row context','The current row being evaluated in a DAX expression.',['report page','gateway state','visual interaction'],'Row context is common in calculated columns and iterators.'],
+ ['slicer','A report visual that lets users interactively filter data.',['dataflow','gateway','workspace'],'Slicers expose filter choices to report consumers.'],
+ ['drill-through','Navigation to a detail page filtered for a selected data point.',['data refresh','query folding','theme import'],'Drill-through opens a detail page in the selected context.'],
+ ['gateway','A bridge that enables Power BI cloud services to access on-premises data.',['DAX measure','slicer','bookmark'],'A gateway securely connects cloud refresh or queries to local sources.'],
+ ['row-level security','A model security feature that restricts rows for users or roles.',['visual-level formatting','data label','theme'],'RLS filters data based on the signed-in user role or identity.']
+ ],
+ hr:[
+ ['STAR method','A structured interview response format: Situation, Task, Action, Result.',['salary banding','technical screening','job grading'],'STAR helps candidates explain behavioral examples clearly.'],
+ ['strength','A capability or quality that supports effective job performance.',['unrelated weakness','notice period','salary slip'],'A good strength answer includes evidence and relevance to the role.'],
+ ['weakness','A genuine development area paired with steps being taken to improve.',['false claim','company criticism','unrelated personal detail'],'A constructive answer shows self-awareness and improvement.'],
+ ['conflict resolution','Addressing disagreement respectfully and working toward a solution.',['avoiding all feedback','blaming colleagues','withholding information'],'Effective conflict resolution focuses on facts, listening and shared goals.'],
+ ['teamwork','Working collaboratively toward a shared outcome.',['working in isolation always','avoiding communication','competing against teammates'],'Teamwork involves communication, accountability and cooperation.'],
+ ['adaptability','Adjusting effectively when priorities, tools or situations change.',['refusing change','ignoring feedback','avoiding learning'],'Adaptability is shown through flexibility and learning.'],
+ ['professional ethics','Applying honesty, fairness, confidentiality and responsibility at work.',['sharing private data','misrepresenting results','bypassing controls'],'Ethical conduct builds trust and protects stakeholders.'],
+ ['notice period','The time an employee is expected to work after resigning.',['probation score','annual bonus','job description'],'Notice periods are governed by employment terms and policy.'],
+ ['career goal','A considered direction for future professional growth.',['unrelated hobby','salary demand only','past attendance'],'Career goals should connect skills, interests and realistic development.'],
+ ['feedback','Information about performance used to reinforce or improve behavior.',['rumor','job title','offer letter'],'Useful feedback is specific, actionable and respectful.'],
+ ['salary expectation','A compensation range aligned with role, skills and market conditions.',['personal password','notice period','training plan'],'Candidates should research the role and explain expectations professionally.'],
+ ['ownership','Taking responsibility for tasks, decisions and outcomes.',['shifting blame','ignoring deadlines','hiding mistakes'],'Ownership means following through and communicating issues early.']
+ ],
+ aiEngineer:[
+ ['supervised learning','Training a model using labelled examples.',['clustering without labels','manual sorting','database indexing'],'Supervised learning maps input features to known target labels.'],
+ ['classification','Predicting a discrete class or category.',['predicting a continuous value','sorting rows','compressing files'],'Classification predicts categories such as spam or not spam.'],
+ ['regression','Predicting a continuous numerical value.',['predicting a class only','clustering','tokenization'],'Regression estimates numeric outcomes such as price or demand.'],
+ ['feature engineering','Creating or transforming input variables to help a model learn.',['model hosting','data encryption','report formatting'],'Feature engineering can expose useful patterns to a model.'],
+ ['cross-validation','Repeatedly evaluating a model on different train-validation splits.',['single training pass','data deletion','feature scaling only'],'Cross-validation estimates how performance varies across data splits.'],
+ ['precision','The fraction of predicted positives that are truly positive.',['fraction of actual positives found','average error magnitude','overall accuracy'],'Precision is TP divided by TP plus FP.'],
+ ['recall','The fraction of actual positives correctly identified.',['fraction of predicted positives correct','mean squared error','model size'],'Recall is TP divided by TP plus FN.'],
+ ['F1 score','The harmonic mean of precision and recall.',['arithmetic mean error','training duration','feature count'],'F1 balances precision and recall.'],
+ ['overfitting','Learning training-specific noise and generalizing poorly.',['model too simple','perfect generalization','data ingestion'],'Overfitting often shows high training performance and weaker validation performance.'],
+ ['regularization','A technique that discourages overly complex model behavior.',['data duplication','label encoding only','random deployment'],'Regularization can reduce overfitting by constraining model complexity.'],
+ ['gradient descent','An optimization method that updates parameters using loss gradients.',['data joining','token splitting','database backup'],'Gradient descent iteratively moves parameters to reduce a loss function.'],
+ ['model deployment','Making a trained model available for inference in an application.',['data annotation','feature deletion','training split'],'Deployment serves model predictions to users or systems.']
+ ],
+ dataEngineer:[
+ ['ETL','Extracting data, transforming it and loading it into a target.',['encrypt-transfer-login','evaluate-train-learn','event-time-logic'],'ETL transforms data before loading it into the destination.'],
+ ['ELT','Loading raw data first and transforming it in the destination platform.',['extract-link-test','encode-load-train','event-log-time'],'ELT uses the target platform for transformation after loading.'],
+ ['data warehouse','A curated analytical store designed for reporting and analysis.',['transactional app cache','source code repo','message broker only'],'Warehouses integrate structured data for analytical workloads.'],
+ ['data lake','A repository that stores large volumes of raw or varied-format data.',['dashboard page','relational index','single CSV file'],'Data lakes can retain raw structured, semi-structured and unstructured data.'],
+ ['Apache Spark','A distributed processing engine for large-scale data workloads.',['BI chart type','relational constraint','web browser'],'Spark supports distributed batch and streaming processing.'],
+ ['partitioning','Dividing a dataset into subsets based on a key or rule.',['encryption','schema deletion','data masking only'],'Partitioning can improve pruning and parallel processing.'],
+ ['data pipeline','A sequence of steps that moves and transforms data.',['visual theme','password policy','single query result'],'Pipelines automate data ingestion, transformation and delivery.'],
+ ['orchestration','Scheduling, coordinating and monitoring pipeline tasks.',['column encoding','data compression only','dashboard filtering'],'Orchestration manages dependencies, retries and task execution.'],
+ ['schema evolution','Managing changes to data structure over time.',['model scoring','file compression','user authentication'],'Schema evolution handles added, removed or changed fields safely.'],
+ ['data quality','The fitness of data for use, including accuracy and completeness.',['network speed','CPU temperature','visual design'],'Data quality checks detect missing, invalid, duplicate or inconsistent records.'],
+ ['CDC','Change Data Capture, which identifies and propagates source data changes.',['cloud data catalog','column distribution chart','code deployment check'],'CDC captures inserts, updates and deletes from a source system.'],
+ ['idempotency','A property where repeating an operation has the same intended effect.',['randomized output','schema inference','data visualization'],'Idempotent pipeline steps are safer to retry without duplicating effects.']
+ ]
+};
+const quizQuestionFrames=[
+ c=>`Which concept best matches this description: ${c[1]}`,
+ c=>`In a technical interview, which term means: ${c[1]}`,
+ c=>`Choose the most accurate concept for the following requirement: ${c[1]}`,
+ c=>`A team needs this capability: ${c[1]} Which option should it use?`,
+ c=>`What is the correct name for the approach described here? ${c[1]}`,
+ c=>`Select the term whose primary purpose is: ${c[1]}`,
+ c=>`Which item would you explain to a teammate using this definition? ${c[1]}`,
+ c=>`Identify the concept from its behavior: ${c[1]}`,
+ c=>`Which answer is most directly associated with this use case? ${c[1]}`,
+ c=>`A project requirement states: “${c[1]}” Which concept addresses it?`,
+ c=>`Which technical term should complete this statement? The requirement is to achieve: ${c[1]}`,
+ c=>`What should a candidate name when asked about this capability? ${c[1]}`,
+ c=>`Which concept is being described in this scenario? ${c[1]}`,
+ c=>`Choose the best matching principle: ${c[1]}`,
+ c=>`Which option describes the following function or responsibility? ${c[1]}`,
+ c=>`A colleague describes a solution as follows: ${c[1]} What is it called?`,
+ c=>`Which term would you use in documentation for this behavior? ${c[1]}`,
+ c=>`Select the concept that fulfills this purpose: ${c[1]}`,
+ c=>`Which item is the best fit for this definition in the selected subject? ${c[1]}`,
+ c=>`What is the standard name for the capability: ${c[1]}`,
+ c=>`Which answer correctly identifies this topic? ${c[1]}`,
+ c=>`In a project discussion, which concept is meant by: ${c[1]}`,
+ c=>`Choose the correct technical or professional term for: ${c[1]}`,
+ c=>`Which concept would solve a requirement described as: ${c[1]}`,
+ c=>`A quiz asks for the term behind this explanation: ${c[1]}`,
+ c=>`Which category concept is defined as follows? ${c[1]}`,
+ c=>`What is the most precise label for this practice? ${c[1]}`,
+ c=>`Which answer matches the responsibility described here? ${c[1]}`,
+ c=>`Identify the best matching term for this objective: ${c[1]}`,
+ c=>`Which concept should be selected for this definition? ${c[1]}`,
+ c=>`A learner is revising this idea: ${c[1]} Which term names it?`,
+ c=>`Which option is the accepted name for this technique or feature? ${c[1]}`,
+ c=>`What concept is represented by the following statement? ${c[1]}`,
+ c=>`Select the term that most accurately describes: ${c[1]}`,
+ c=>`Which subject-specific idea is being tested? ${c[1]}`,
+ c=>`Choose the matching concept for this interview prompt: ${c[1]}`,
+ c=>`Which option should be used to describe this capability? ${c[1]}`,
+ c=>`What is the best answer when asked to define: ${c[1]}`,
+ c=>`Which concept corresponds to the following task or property? ${c[1]}`,
+ c=>`Identify the term associated with this explanation: ${c[1]}`,
+ c=>`Which answer completes this description correctly? ${c[1]}`,
+ c=>`Pick the concept most closely aligned with: ${c[1]}`
+];
+for(const [category,concepts] of Object.entries(quizConcepts)){
+ const generated=[];
+ concepts.forEach((concept,ci)=>quizQuestionFrames.forEach((frame,fi)=>{
+  const wrong=concept[2];
+  const opts=[concept[0],wrong[(fi+ci)%3],wrong[(fi+ci+1)%3],wrong[(fi+ci+2)%3]];
+  generated.push({topic:[concept[0].toLowerCase()],level:fi%3===0?'easy':fi%3===1?'medium':'hard',q:frame(concept),a:opts,c:0,why:concept[3]});
+ }));
+ quizBank[category]=generated;
+}
+function updateQuizTopicOptions(){
+ const sel=document.getElementById('quizSubject');if(sel)document.getElementById('quizBankCount').textContent=`${quizBank[sel.value]?.length||0} prepared questions · exactly 15 questions per round.`;
+}
+function populateQuizSelectors(){updateQuizTopicOptions();}
+function quizCategory(subjectName){return String(subjectName||'').trim();}
+
+function shuffleQuiz(list){return list.map(x=>({x,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(v=>v.x);}
+function makeQuizQuestion(q,i){
+ const order=shuffleQuiz(q.a.map((label,index)=>({label,correct:index===q.c})));
+ return {...q,id:'cq'+i,options:order,correctIndex:order.findIndex(x=>x.correct)};
+}
+function startTopicQuiz(){
+ const category=document.getElementById('quizSubject').value;
+ const categoryNames={python:'Python',mysql:'MySQL',genai:'GenAI',agentai:'Agentic AI',powerbi:'Power BI',hr:'HR Round',aiEngineer:'AI Engineer',dataEngineer:'Data Engineer'};
+ const categoryName=categoryNames[category];
+ let pool=quizBank[category]||[];
+ const level=document.getElementById('quizDifficulty').value;
+ if(level!=='all')pool=pool.filter(q=>q.level===level);
+ if(pool.length<15){document.getElementById('quizSetupMessage').textContent='Not enough questions at this difficulty. Choose Mixed level.';return;}
+ activeQuizContext=categoryName;
+ activeQuizQuestions=shuffleQuiz(pool).slice(0,15).map(makeQuizQuestion);
+ quizSubmitted=false;
+ document.getElementById('quizRoundTitle').textContent=`${categoryName} · 15-Question Round`;
+ document.getElementById('quizSetupMessage').textContent=`15 questions selected only from ${categoryName}. Question bank: ${(quizBank[category]||[]).length} questions.`;
+ document.getElementById('quizProgress').textContent='15 questions';
+ document.getElementById('quizResult').textContent='';document.getElementById('quizReview').innerHTML='';
+ document.getElementById('quizArea').innerHTML=activeQuizQuestions.map((q,i)=>`<div class="item quiz-question"><div class="small">QUESTION ${i+1} OF 15 · ${q.level.toUpperCase()}</div><strong>${safe(q.q)}</strong>${q.options.map((o,j)=>`<label style="display:block;margin:10px 0"><input type="radio" style="width:auto" name="q${i}" value="${j}"> ${String.fromCharCode(65+j)}. ${safe(o.label)}</label>`).join('')}</div>`).join('');
+}
+
+function loadQuiz(){
+ // Keep the quiz workspace empty until the learner selects a subject and topic.
+ activeQuizContext='';
+ activeQuizQuestions=[];
+ quizSubmitted=false;
+ document.getElementById('quizRoundTitle').textContent='🏁 Your topic challenge will appear here';
+ document.getElementById('quizProgress').textContent='Ready';
+ document.getElementById('quizResult').textContent='';
+ document.getElementById('quizReview').innerHTML='';
+ document.getElementById('quizArea').innerHTML='<p class="small">Select one of the eight categories and start a 15-question round.</p>';
+ populateQuizSelectors();
+}
+function checkQuiz(){
+ if(!activeQuizQuestions.length){document.getElementById('quizResult').textContent='Start a quiz first.';return;}
+ if(quizSubmitted)return;
+ let score=0,answered=0;
+ const review=activeQuizQuestions.map((q,i)=>{
+  const chosen=document.querySelector(`input[name="q${i}"]:checked`);
+  const correct=chosen&&Number(chosen.value)===q.correctIndex;
+  if(chosen)answered++;if(correct)score++;
+  return `<div class="item"><strong>${correct?'✅':'❌'} ${i+1}. ${safe(q.q)}</strong><p>Your answer: ${chosen?safe(q.options[Number(chosen.value)].label):'Not answered'}</p><p><b>Correct answer:</b> ${safe(q.options[q.correctIndex].label)}</p><p class="small">💡 ${safe(q.why)}</p></div>`;
+ }).join('');
+ quizSubmitted=true;
+ const percent=Math.round(score/activeQuizQuestions.length*100);
+ data.quizHistory=Array.isArray(data.quizHistory)?data.quizHistory:[];
+ data.quizHistory.unshift({id:Date.now(),title:activeQuizContext,score,total:activeQuizQuestions.length,answered,percent,date:new Date().toLocaleString()});
+ data.quizHistory=data.quizHistory.slice(0,100);
+ saveData();
+ renderQuizHistory();
+ document.getElementById('quizResult').textContent=`🏆 Score: ${score}/${activeQuizQuestions.length} (${percent}%) · Answered: ${answered}/${activeQuizQuestions.length} · ${percent>=80?'Excellent work!':percent>=50?'Good effort — review and try again!':'Keep practising — you can improve!'}`;
+ document.getElementById('quizReview').innerHTML='<h3>📘 Answer review</h3>'+review;
+ document.getElementById('quizProgress').textContent='Completed';
+}
+function renderQuizHistory(){
+ const box=document.getElementById('quizHistory');
+ if(!box)return;
+ const history=Array.isArray(data.quizHistory)?data.quizHistory:[];
+ box.innerHTML=history.slice(0,12).map(item=>`<div class="item"><strong>${safe(item.title||'Quiz Practice')}</strong><p class="small">Score: ${Number(item.score)||0}/${Number(item.total)||0} (${Number(item.percent)||0}%) · Answered: ${Number(item.answered)||0} · ${safe(item.date||'')}</p></div>`).join('')||'<p class="small">No quizzes completed yet. Start a quiz to save your first result.</p>';
+}
+
+/* INTERVIEW SIMULATOR */
+const interviewBank={
+ AI:[
+  {q:"What is Artificial Intelligence, and what problems can it solve?",sample:"Artificial Intelligence is the area of computing that builds systems able to perform tasks such as reasoning, recognising patterns, understanding language and making decisions. Examples include recommendation systems, fraud detection and voice assistants."},
+  {q:"What is the difference between narrow AI and general AI?",sample:"Narrow AI is designed for a specific task, such as translation or image recognition. Artificial General Intelligence would be able to learn and perform a broad range of intellectual tasks at a human-like level; it has not been achieved."},
+  {q:"Explain the main components of an AI system.",sample:"An AI system commonly includes data or inputs, a model or knowledge representation, an inference or decision process, and outputs. Many systems also include evaluation, monitoring and feedback."},
+  {q:"Give a real-world example of AI and explain how it works.",sample:"An email spam filter analyses message features and patterns learned from examples. It estimates whether a new email is spam and places it in the appropriate folder. The model can be improved using reviewed examples."},
+  {q:"What are important ethical risks when developing AI?",sample:"Risks include biased decisions, privacy violations, lack of transparency, security problems and over-reliance on automated decisions. Teams should test across groups, protect data, explain limitations and provide human oversight."}
+ ],
+ ML:[
+  {q:"What is Machine Learning, and how is it related to AI?",sample:"Machine Learning is a branch of AI in which algorithms learn patterns from data to make predictions or decisions. AI is the broader field; ML is one approach used to build AI systems."},
+  {q:"Explain supervised, unsupervised and reinforcement learning.",sample:"Supervised learning uses labelled examples. Unsupervised learning finds structure in unlabelled data, such as clusters. Reinforcement learning learns actions through rewards and penalties while interacting with an environment."},
+  {q:"What is the difference between classification and regression?",sample:"Classification predicts a class or category, such as spam or not spam. Regression predicts a continuous numeric value, such as house price or temperature."},
+  {q:"What are overfitting and underfitting? How can you reduce them?",sample:"Overfitting happens when a model memorises training data and performs poorly on new data. Underfitting happens when it cannot learn the underlying pattern. Cross-validation, regularisation, more suitable features and model complexity control can help."},
+  {q:"What is a confusion matrix? Explain accuracy, precision and recall.",sample:"A confusion matrix compares predicted classes with actual classes using true positives, false positives, true negatives and false negatives. Accuracy is correct predictions divided by all predictions; precision is TP/(TP+FP); recall is TP/(TP+FN)."}
+ ],
+ GenAI:[
+  {q:"What is Generative AI, and how is it different from traditional AI?",sample:"Generative AI creates new content such as text, images, audio or code based on patterns learned during training. Traditional AI is often designed to classify, predict, rank or make decisions rather than generate new content."},
+  {q:"What is a Large Language Model (LLM)?",sample:"An LLM is a neural network trained on large amounts of text to process and generate language. Many modern LLMs use transformer architectures and predict likely next tokens based on context."},
+  {q:"What is prompt engineering? Give an example of a good prompt.",sample:"Prompt engineering means writing clear instructions and context to guide a model. For example: 'Explain Python lists to a beginner in five bullet points and include one short code example.'"},
+  {q:"What are hallucinations in Generative AI, and how can they be reduced?",sample:"A hallucination is a confident-sounding output that is incorrect or unsupported. Reduce risk by grounding answers in trusted sources, using retrieval, checking citations, asking for uncertainty and verifying important claims."},
+  {q:"What is Retrieval-Augmented Generation (RAG)?",sample:"RAG retrieves relevant information from an external knowledge source and supplies it to a language model as context before generation. It can make answers more relevant to private or current documents, though retrieved content still needs checking."}
+ ],
+ AIAgent:[
+  {q:"What is an AI Agent?",sample:"An AI Agent is a system that observes a situation, decides what to do and takes actions to achieve a goal. It may use a language model, tools, memory and a control loop."},
+  {q:"How is an AI Agent different from a normal chatbot?",sample:"A basic chatbot mainly responds to messages. An agent can plan multiple steps, use tools such as search or code execution, observe tool results and continue acting toward a goal, subject to permissions and safeguards."},
+  {q:"What are tools and memory in an AI Agent?",sample:"Tools let an agent interact with external systems, such as databases, APIs or calculators. Memory stores relevant information from the current task or previous interactions so the agent can use context later."},
+  {q:"Explain the observe-plan-act cycle of an AI Agent.",sample:"The agent observes the request and environment, plans a suitable next step, performs an action using an available tool, then observes the result. It repeats this cycle until the goal is reached or it needs human input."},
+  {q:"What safety measures should be used when building AI Agents?",sample:"Use least-privilege tool access, validate inputs and outputs, require confirmation for sensitive actions, set limits on steps and spending, log actions, protect secrets and provide a human override."}
+ ],
+ Python:[
+  {q:"What is Python, and what are its main features?",sample:"Python is a high-level, general-purpose programming language known for readable syntax. It supports multiple programming styles, dynamic typing and a large ecosystem of libraries."},
+  {q:"What is the difference between a list, tuple, set and dictionary?",sample:"A list is an ordered, mutable collection. A tuple is ordered and immutable. A set stores unique elements. A dictionary stores key-value pairs with unique keys."},
+  {q:"What is the difference between == and is in Python?",sample:"The == operator checks whether two values are equal. The is operator checks whether two references point to the same object."},
+  {q:"What are functions, modules and packages in Python?",sample:"A function is a reusable block of code. A module is a Python file containing definitions and statements. A package groups related modules, usually in a directory structure."},
+  {q:"What is exception handling? Explain try, except and finally.",sample:"Exception handling manages runtime errors. Code that may fail is placed in try, except handles a matching error, and finally runs whether an exception occurred or not."}
+ ],
+ AIEngineering:[
+  {q:"What is AI Engineering, and how is it different from AI research and traditional software engineering?",sample:"AI Engineering focuses on designing, building, integrating, deploying and maintaining AI-powered applications. It applies AI models within reliable software systems, with attention to data pipelines, APIs, evaluation, security, monitoring, latency and cost."},
+  {q:"Describe the end-to-end lifecycle of an AI application.",sample:"Start with requirements and success metrics, prepare data, select or train a model, build an application and API layer, evaluate quality and safety, deploy, monitor production behaviour, collect feedback and iterate."},
+  {q:"How would you choose between an API-based foundation model, an open-source model and a custom-trained model?",sample:"Compare task quality, privacy, deployment control, latency, cost, licensing, scalability and maintenance. Prototype against representative data and choose the simplest option that meets requirements."},
+  {q:"How do you evaluate an AI application beyond model accuracy?",sample:"Evaluate task success, factuality, robustness, safety, fairness, latency, throughput, availability, user satisfaction and cost. Use representative test sets, human review and production monitoring."},
+  {q:"A deployed AI feature is slow, expensive and sometimes produces unsafe output. How would you improve it?",sample:"Measure latency and token or compute costs, profile each stage, optimise prompts and retrieval, consider caching or smaller models, add input/output safeguards, test failure cases and monitor quality after each change."}
+ ],
+ DataEngineering:[
+  {q:"What is Data Engineering, and what does a Data Engineer do?",sample:"Data Engineering builds and maintains systems that collect, ingest, store, transform and deliver reliable data for analytics, applications and machine learning. Data Engineers design pipelines, data models, quality checks and platform operations."},
+  {q:"Explain ETL and ELT. When would you use each?",sample:"ETL extracts data, transforms it and then loads it into the destination. ELT loads raw data first and transforms it in the destination platform. ELT is common in scalable cloud warehouses; ETL can suit systems requiring transformation before loading."},
+  {q:"What is the difference between batch processing and stream processing?",sample:"Batch processing handles accumulated data on a schedule, such as hourly or daily. Stream processing handles events continuously or near real time. The choice depends on freshness requirements, complexity, volume and cost."},
+  {q:"How would you design a reliable data pipeline from source systems to a data warehouse?",sample:"Identify sources and SLAs, ingest incrementally where possible, land raw data, validate schemas and quality, transform into curated models, make loads idempotent, handle retries and late data, orchestrate dependencies and monitor failures."},
+  {q:"How do you handle duplicate records, missing values, schema changes and pipeline failures?",sample:"Use stable business keys and deduplication rules, define missing-value policies with data owners, apply schema contracts and versioning, quarantine invalid records, make tasks retry-safe, log lineage and alert on freshness or quality failures."}
+ ],
+ MySQL:[
+  {q:"What is MySQL, and what is a relational database?",sample:"MySQL is a relational database management system. A relational database organises data into tables with rows and columns and connects related data using keys."},
+  {q:"What is the difference between primary key and foreign key?",sample:"A primary key uniquely identifies each row in its table. A foreign key references a key in another or the same table to maintain relationships and referential integrity."},
+  {q:"Explain INNER JOIN and LEFT JOIN.",sample:"INNER JOIN returns rows with matching values in both tables. LEFT JOIN returns every row from the left table and matching rows from the right; unmatched right-side columns are NULL."},
+  {q:"What is the difference between WHERE and HAVING?",sample:"WHERE filters individual rows before grouping. HAVING filters grouped results, often using aggregate functions such as COUNT or SUM."},
+  {q:"What are indexes and database normalization?",sample:"An index can speed up data retrieval but uses storage and can slow writes. Normalization organises tables to reduce duplicated data and update anomalies while preserving relationships."}
+ ]
+};
+let interviewQuestions=[],interviewIndex=0,interviewEvaluated=false,interviewScore=0,interviewStarted=false,activeInterviewTopic="AI";
+const interviewTopicNames={AI:"Artificial Intelligence (AI)",ML:"Machine Learning (ML)",GenAI:"Generative AI (GenAI)",AIAgent:"AI Agents",Python:"Python",MySQL:"MySQL",AIEngineering:"AI Engineering",DataEngineering:"Data Engineering"};
+function resetInterview(){
+ interviewQuestions=[];interviewIndex=0;interviewEvaluated=false;interviewStarted=false;interviewScore=0;
+ const topic=document.getElementById("interviewCategory").value;
+ document.getElementById("interviewQuestion").textContent="Choose a topic and press “Start Interview” to get your first question.";
+ document.getElementById("interviewAnswer").value="";document.getElementById("interviewAnswer").classList.remove("answer-started","answer-ready");document.getElementById("interviewAnswer").disabled=true;
+ document.getElementById("evaluateInterviewBtn").disabled=true;document.getElementById("sampleInterviewBtn").disabled=true;document.getElementById("nextInterviewBtn").disabled=true;
+ document.getElementById("interviewFeedback").innerHTML="";document.getElementById("interviewProgress").textContent="Ready to begin";document.getElementById("interviewProgressBar").style.width="0%";
+ document.getElementById("interviewType").textContent=interviewTopicNames[topic]||topic;
+}
+function buildInterviewQuestions(topic,total,level){
+ const base=interviewBank[topic].map(x=>({...x}));
+ const extras=[
+  {q:`Explain an important real-world use case of ${interviewTopicNames[topic]}.`,sample:`Choose a real problem, explain how ${interviewTopicNames[topic]} can help, describe the data or inputs required, and mention how you would measure whether the solution works.`},
+  {q:`What are common challenges or limitations when working with ${interviewTopicNames[topic]}?`,sample:`Discuss data quality, reliability, performance, security, cost and fairness where relevant. Explain how you would test, monitor and improve the solution.`},
+  {q:`How would you explain ${interviewTopicNames[topic]} to a beginner with a simple example?`,sample:`Start with a clear definition, avoid unnecessary jargon, and use a familiar example. Explain the input, what the system does and the result.`},
+  {q:`Describe a small project you could build using ${interviewTopicNames[topic]}.`,sample:`State the problem, the tools and data you would use, the steps you would follow, and the result you would evaluate. Mention one possible improvement.`},
+  {q:`How would you test and improve a solution involving ${interviewTopicNames[topic]}?`,sample:`Define success criteria, test with representative cases, inspect errors, collect feedback and compare improvements. Document limitations and monitor performance after release.`},
+  {q:`What advanced concept in ${interviewTopicNames[topic]} would you like to learn, and why?`,sample:`Name a relevant advanced concept, explain its purpose at a high level, and connect it to a practical problem or project.`},
+  {q:`Compare two approaches or tools used in ${interviewTopicNames[topic]}.`,sample:`Compare them based on purpose, strengths, limitations, complexity and use case. Explain why you would choose one for a particular requirement.`},
+  {q:`A solution in ${interviewTopicNames[topic]} is giving incorrect results. How would you troubleshoot it?`,sample:`Reproduce the issue, inspect inputs and assumptions, check data or configuration, isolate the failing step, test a fix and verify the result with known cases.`},
+  {q:`What security, privacy or ethical concerns should be considered in ${interviewTopicNames[topic]}?`,sample:`Identify sensitive data and potential misuse, limit access, protect information, test for unfair outcomes and explain system limitations. Add human review for high-impact decisions.`},
+  {q:`Explain how you would present the results of a ${interviewTopicNames[topic]} project to a non-technical manager.`,sample:`Describe the original problem, the approach in plain language, measurable results, costs or risks, limitations and the recommended next step.`},
+  {q:`How would you choose the right approach for a new ${interviewTopicNames[topic]} problem?`,sample:`Clarify requirements, constraints and success measures; inspect available data and tools; compare simple baselines with alternatives; then test the most suitable option.`},
+  {q:`Describe a mistake a beginner might make in ${interviewTopicNames[topic]} and how to avoid it.`,sample:`A common mistake is choosing a tool before understanding the problem. Start with requirements, learn the fundamentals, test small examples and validate assumptions.`},
+  {q:`How do you keep your knowledge of ${interviewTopicNames[topic]} up to date?`,sample:`Follow official documentation, take structured courses, build small projects, read reliable technical articles and practise explaining new concepts.`},
+  {q:`What metrics or evidence would show that a ${interviewTopicNames[topic]} solution is successful?`,sample:`Choose metrics based on the goal, such as accuracy, response time, reliability, user satisfaction or cost. Compare against a baseline and test on realistic cases.`},
+  {q:`Walk through the steps you would take to deliver a ${interviewTopicNames[topic]} project from idea to completion.`,sample:`Define the problem and success criteria, plan the solution, prepare inputs, implement a small version, test it, document findings and improve based on feedback.`}
+ ];
+ const levelPrompts={Beginner:"Answer clearly using a simple definition and example. ",Intermediate:"Include the workflow, practical considerations and an example. ",Advanced:"Discuss trade-offs, limitations, design choices and evaluation. "};
+ let i=0;while(base.length<total){const x=extras[i%extras.length];base.push({q:levelPrompts[level]+x.q,sample:x.sample});i++;}
+ return base.slice(0,total);
+}
+function startInterview(){
+ const topic=document.getElementById("interviewCategory").value;
+ const level=document.getElementById("interviewLevel").value;
+ const total=Number(document.getElementById("interviewTotal").value)||5;
+ activeInterviewTopic=topic;interviewQuestions=buildInterviewQuestions(topic,total,level);interviewIndex=0;interviewScore=0;interviewStarted=true;interviewEvaluated=false;
+ showInterviewQuestion();
+}
+function showInterviewQuestion(){
+ const q=interviewQuestions[interviewIndex];if(!q)return;
+ document.getElementById("interviewType").textContent=interviewTopicNames[activeInterviewTopic];
+ document.getElementById("interviewProgress").textContent=`Question ${interviewIndex+1} of ${interviewQuestions.length}`;
+ document.getElementById("interviewProgressBar").style.width=((interviewIndex)/interviewQuestions.length*100)+"%";
+ document.getElementById("interviewQuestion").textContent=q.q;
+ document.getElementById("interviewAnswer").value="";document.getElementById("interviewAnswer").classList.remove("answer-started","answer-ready");document.getElementById("interviewAnswer").disabled=false;
+ document.getElementById("evaluateInterviewBtn").disabled=false;document.getElementById("sampleInterviewBtn").disabled=false;document.getElementById("nextInterviewBtn").disabled=true;
+ document.getElementById("interviewFeedback").innerHTML="";interviewEvaluated=false;
+}
+function updateInterviewAnswerColor(){
+ const box=document.getElementById("interviewAnswer");
+ if(!box)return;
+ const words=box.value.trim().split(/\s+/).filter(Boolean).length;
+ box.classList.toggle("answer-started",words>0&&words<20);
+ box.classList.toggle("answer-ready",words>=20);
+ if(words===0)box.classList.remove("answer-started","answer-ready");
+}
+function evaluateInterviewAnswer(){
+ if(!interviewStarted)return;
+ const answer=document.getElementById("interviewAnswer").value.trim();
+ if(answer.length<10)return alert("Please write a little more before evaluating your answer.");
+ if(interviewEvaluated)return alert("You have already evaluated this answer. Continue to the next question.");
+ const words=answer.split(/\s+/).filter(Boolean);const useful=words.length>=35?20:words.length>=20?17:words.length>=10?13:8;
+ const hasExample=/example|for instance|because|such as|project|experience/i.test(answer)?5:0;
+ const hasStructure=/first|second|finally|therefore|result|learned/i.test(answer)?5:0;
+ const score=Math.min(30,useful+hasExample+hasStructure);interviewScore+=score;interviewEvaluated=true;
+ const feedback=score>=25?"Strong response. It has useful detail and a clear explanation.":score>=18?"Good start. Add a specific example and organise your points more clearly.":"Keep practising. Give a more complete answer, explain your point and add a relevant example.";
+ const feedbackClass=score>=25?"feedback-strong":score>=18?"feedback-mid":"feedback-low";
+ document.getElementById("interviewFeedback").innerHTML=`<div class="interview-feedback ${feedbackClass}"><strong>Practice score: ${score}/30</strong><br>${feedback}<br><span class="small">This is an automated practice estimate based on answer length and a few structure/example cues, not a human assessment.</span></div>`;
+ document.getElementById("evaluateInterviewBtn").disabled=true;document.getElementById("nextInterviewBtn").disabled=false;
+}
+function showInterviewSample(){
+ if(!interviewQuestions.length)return;
+ const sample=interviewQuestions[interviewIndex].sample;
+ document.getElementById("interviewFeedback").innerHTML=`<div class="interview-feedback feedback-sample"><strong>Sample answer (use your own words):</strong><br>${safe(sample)}</div>`;
+}
+function nextInterviewQuestion(){
+ if(!interviewEvaluated)return alert("Evaluate your answer before moving to the next question.");
+ if(interviewIndex<interviewQuestions.length-1){interviewIndex++;showInterviewQuestion();}
+ else{
+  const percent=Math.round(interviewScore/(interviewQuestions.length*30)*100);
+  data.interviewHistory=data.interviewHistory||[];
+  data.interviewHistory.unshift({id:Date.now(),category:interviewTopicNames[activeInterviewTopic],score:percent,answered:interviewQuestions.length,date:new Date().toLocaleDateString()});
+  saveData();renderInterviewStats();
+  document.getElementById("interviewProgress").textContent="Interview completed";document.getElementById("interviewProgressBar").style.width="100%";
+  document.getElementById("interviewQuestion").textContent=`${interviewTopicNames[activeInterviewTopic]} interview completed! Your practice score is ${percent}%.`;
+  document.getElementById("interviewAnswer").disabled=true;document.getElementById("evaluateInterviewBtn").disabled=true;document.getElementById("sampleInterviewBtn").disabled=true;document.getElementById("nextInterviewBtn").disabled=true;
+  document.getElementById("interviewFeedback").innerHTML='<div class="interview-feedback">Great effort! Review your answers and try another topic or difficulty to improve.</div>';
+  interviewStarted=false;
+ }
+}
+function renderInterviewStats(){
+ const history=data.interviewHistory||[];
+ document.getElementById("interviewCount").textContent=history.length;
+ document.getElementById("interviewBest").textContent=(history.length?Math.max(...history.map(x=>Number(x.score)||0)):0)+"%";
+ document.getElementById("interviewAnswered").textContent=history.reduce((n,x)=>n+(Number(x.answered)||0),0);
+ document.getElementById("interviewHistory").innerHTML=history.slice(0,10).map(x=>`<div class="item"><strong>${safe(x.category)} Interview</strong> — ${safe(x.score)}% <span class="small">(${safe(x.answered)} questions · ${safe(x.date)})</span></div>`).join("")||"No mock interviews completed yet.";
+}
+
+/* BACKUP */
+function downloadFile(name,content,type){
+ const blob=new Blob([content],{type});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download=name;a.click();
+ URL.revokeObjectURL(url);
+}
+function exportData(){
+ downloadFile("daily-learning-backup.json",JSON.stringify(data,null,2),"application/json");
+}
+function importData(){
+ const file=document.getElementById("importFile").files[0];
+ if(!file)return alert("Choose a backup JSON file.");
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const imported=JSON.parse(reader.result);
+   if(!imported||!Array.isArray(imported.subjects)||!Array.isArray(imported.topics))
+    throw new Error("This does not look like a valid learning backup.");
+   data={...data,...imported};
+   if(!Array.isArray(data.interviewHistory))data.interviewHistory=[];
+   saveData();renderAll();alert("Backup imported successfully!");
+  }catch(e){alert("Could not import backup: "+e.message);}
+ };
+ reader.readAsText(file);
+}
+async function clearData(){
+ if(!confirm("This will delete all learning data from Hemanth’s Study Store, including the connected cloud copy. This cannot be undone. Continue?"))return;
+ data=createEmptyData();
+ activeSubjectId=null;
+ activeNotepadTopicId=null;
+ saveData();
+ renderAll();
+ if(cloudReady && cloudUser){
+  if(cloudSaveTimer){clearTimeout(cloudSaveTimer);cloudSaveTimer=null;}
+  await pushLatestDataToCloud();
+  alert("All learning data has been cleared from this browser and the connected cloud copy.");
+ }else{
+  alert("All learning data has been cleared from this browser. Connect to private cloud before clearing if you also need to remove a cloud copy.");
+ }
+}
+
+/* STARTUP: account restoration is started after all app modules are initialized. */
+
+
+/* STUDY STORE */
+const studyStoreCatalog={
+ python:{name:"Python Starter Pack",icon:"🐍",detail:"Variables, conditions, loops, functions and beginner coding missions."},
+ mysql:{name:"MySQL Mission Pack",icon:"🗄️",detail:"SQL commands, joins, functions and query-writing challenges."},
+ aiml:{name:"AI & ML Quick Revision",icon:"🧠",detail:"Machine learning basics, regression, algorithms and key definitions."},
+ english:{name:"English Word Builder",icon:"🔤",detail:"Useful vocabulary, spelling practice and sentence-building prompts."},
+ interview:{name:"Interview Challenge Cards",icon:"🎤",detail:"HR, Python, MySQL and AI/ML interview preparation prompts."},
+ planner:{name:"Study Planner Kit",icon:"🗓️",detail:"Daily study targets, revision checklists and weekly planning ideas."}
+};
+function collectStudyItem(id){
+ if(!studyStoreCatalog[id])return;
+ if(!Array.isArray(data.studyStoreItems))data.studyStoreItems=[];
+ if(!data.studyStoreItems.includes(id)){data.studyStoreItems.push(id);saveData();}
+ renderStudyStore();
+}
+function removeStudyItem(id){
+ data.studyStoreItems=(data.studyStoreItems||[]).filter(x=>x!==id);saveData();renderStudyStore();
+}
+function renderStudyStore(){
+ const shelf=document.getElementById("myStudyShelf");if(!shelf)return;
+ if(!Array.isArray(data.studyStoreItems))data.studyStoreItems=[];
+ const count=document.getElementById("storeCollectedCount");if(count)count.textContent=data.studyStoreItems.length;
+ document.querySelectorAll("#studyStoreGrid button").forEach(btn=>{const id=btn.getAttribute("onclick").match(/'([^']+)'/);if(!id)return;const got=data.studyStoreItems.includes(id[1]);btn.textContent=got?"✓ Collected":"＋ Collect pack";btn.classList.toggle("collected",got);});
+ shelf.innerHTML=data.studyStoreItems.length?data.studyStoreItems.map(id=>{const item=studyStoreCatalog[id];if(!item)return "";return `<div class="item"><div class="row"><div><strong>${item.icon} ${safe(item.name)}</strong><p class="small">${safe(item.detail)}</p></div><button class="danger" onclick="removeStudyItem('${id}')">Remove</button></div></div>`;}).join(""):"No packs collected yet. Choose a free pack above to get started.";
+}
+
+/* SPELLING SKILLS */
+const spellingWords=[
+ {word:"because",meaning:"For the reason that.",example:"I stayed home because it was raining."},
+ {word:"beautiful",meaning:"Pleasant to look at.",example:"The garden is beautiful."},
+ {word:"business",meaning:"An activity that provides goods or services.",example:"She runs a small business."},
+ {word:"customer",meaning:"A person who buys a product or service.",example:"The customer asked a question."},
+ {word:"different",meaning:"Not the same.",example:"We have different ideas."},
+ {word:"education",meaning:"The process of learning.",example:"Education helps us grow."},
+ {word:"experience",meaning:"Knowledge gained by doing something.",example:"Practice gives you experience."},
+ {word:"important",meaning:"Having great value or meaning.",example:"Clear communication is important."},
+ {word:"knowledge",meaning:"Information and understanding.",example:"Reading increases knowledge."},
+ {word:"necessary",meaning:"Needed or required.",example:"A password is necessary to sign in."},
+ {word:"opportunity",meaning:"A chance to do something.",example:"This job is a good opportunity."},
+ {word:"receive",meaning:"To get or accept something.",example:"Did you receive my message?"},
+ {word:"successful",meaning:"Achieving a desired result.",example:"Daily practice can make you successful."},
+ {word:"tomorrow",meaning:"The day after today.",example:"I will study tomorrow."},
+ {word:"vegetable",meaning:"A plant or part of a plant eaten as food.",example:"Carrot is a vegetable."},
+ {word:"writing",meaning:"The activity of forming words on a page.",example:"Writing every day improves your skills."}
+];
+let currentSpellingIndex=0, currentMissingIndex=0, spellingQuizIndex=0, spellingAnswered=false;
+function renderSpellingAcademy(){
+ const done=Array.isArray(data.spellingCompleted)?data.spellingCompleted:[];
+ document.getElementById("spellingWordList").innerHTML=spellingWords.map((w,i)=>`<div class="spelling-word"><div><b>${safe(w.word)}</b><p class="small">${safe(w.meaning)}<br>Example: ${safe(w.example)}</p></div><button class="secondary" onclick="startSpellingWord(${i})">Practise</button></div>`).join("");
+ const pct=Math.round(done.length/spellingWords.length*100);
+ document.getElementById("spellingDone").textContent=done.length;document.getElementById("spellingCorrect").textContent=data.spellingCorrect||0;document.getElementById("spellingPercent").textContent=pct+"%";document.getElementById("spellingProgressBar").style.width=pct+"%";document.getElementById("spellingProgressText").textContent=`${done.length} of ${spellingWords.length} words practised.`;
+ if(!document.getElementById("spellingPrompt").dataset.ready){newSpellingWord();newMissingWord();renderSpellingQuiz();document.getElementById("spellingPrompt").dataset.ready="1";}
+}
+function startSpellingWord(i){currentSpellingIndex=i;const w=spellingWords[i];document.getElementById("spellingPrompt").textContent=`Spell this word: ${w.meaning} Example: ${w.example}`;document.getElementById("spellingInput").value="";document.getElementById("spellingFeedback").textContent="Type the word carefully, then check your answer.";document.getElementById("spellingInput").focus();}
+function newSpellingWord(){let n=Math.floor(Math.random()*spellingWords.length);if(spellingWords.length>1&&n===currentSpellingIndex)n=(n+1)%spellingWords.length;startSpellingWord(n);}
+function checkSpelling(){const typed=document.getElementById("spellingInput").value.trim().toLowerCase(),w=spellingWords[currentSpellingIndex];if(!typed)return alert("Type your spelling first.");if(typed===w.word.toLowerCase()){data.spellingCompleted=data.spellingCompleted||[];if(!data.spellingCompleted.includes(currentSpellingIndex))data.spellingCompleted.push(currentSpellingIndex);data.spellingCorrect=(data.spellingCorrect||0)+1;saveData();document.getElementById("spellingFeedback").textContent="Correct! Well done. "+w.word+" — "+w.meaning;renderSpellingAcademy();}else{document.getElementById("spellingFeedback").textContent=`Not quite. Try again. Hint: ${w.word.length} letters. Check the example: ${w.example}`;}}
+function newMissingWord(){currentMissingIndex=Math.floor(Math.random()*spellingWords.length);const word=spellingWords[currentMissingIndex].word;const pos=Math.floor(Math.random()*word.length);document.getElementById("missingWord").textContent=word.slice(0,pos)+" _ "+word.slice(pos+1);const correct=word[pos],letters=new Set([correct]);const alphabet="abcdefghijklmnopqrstuvwxyz";while(letters.size<4)letters.add(alphabet[Math.floor(Math.random()*26)]);const opts=[...letters].sort(()=>Math.random()-.5);document.getElementById("missingOptions").innerHTML=opts.map(ch=>`<button class="secondary" onclick="checkMissingLetter('${ch}','${correct}')">${ch.toUpperCase()}</button>`).join("");document.getElementById("missingFeedback").textContent="Select the missing letter.";}
+function checkMissingLetter(ch,correct){document.querySelectorAll("#missingOptions button").forEach(b=>b.disabled=true);document.getElementById("missingFeedback").textContent=ch===correct?"Correct letter!":"Try to remember the word and its spelling.";}
+const spellingQuiz=[{q:"Which word is spelled correctly?",o:["Beautifull","Beautiful","Beutiful"],a:1},{q:"Choose the correct spelling.",o:["Succesful","Successful","Successfull"],a:1},{q:"Which spelling is correct?",o:["Receive","Recieve","Receeve"],a:0},{q:"Choose the correct word.",o:["Tomorow","Tommorrow","Tomorrow"],a:2},{q:"Which word is correct?",o:["Neccessary","Necessary","Necesary"],a:1},{q:"Choose the correct spelling.",o:["Buisness","Business","Busines"],a:1}];
+function renderSpellingQuiz(){spellingAnswered=false;const q=spellingQuiz[spellingQuizIndex];document.getElementById("spellingQuizQuestion").textContent=`${spellingQuizIndex+1}. ${q.q}`;document.getElementById("spellingQuizOptions").innerHTML=q.o.map((o,i)=>`<button class="secondary" style="display:block;width:100%;text-align:left;margin:7px 0" onclick="answerSpellingQuiz(${i})">${String.fromCharCode(65+i)}. ${safe(o)}</button>`).join("");document.getElementById("spellingQuizFeedback").textContent="Choose an answer.";}
+function answerSpellingQuiz(i){if(spellingAnswered)return;spellingAnswered=true;const q=spellingQuiz[spellingQuizIndex];document.querySelectorAll("#spellingQuizOptions button").forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add("success");});if(i===q.a){data.spellingCorrect=(data.spellingCorrect||0)+1;saveData();document.getElementById("spellingCorrect").textContent=data.spellingCorrect;}document.getElementById("spellingQuizFeedback").textContent=i===q.a?"Correct! Great spelling.":`Correct answer: ${q.o[q.a]}. Read it and try to remember it.`;}
+function nextSpellingQuiz(){spellingQuizIndex=(spellingQuizIndex+1)%spellingQuiz.length;renderSpellingQuiz();}
+
+// Open Hemanth's personal Study Store directly. No registration or login screen is shown.
+(async function startHemanthStudyStore(){
+ activeProfileId=HEMANTH_PROFILE_ID;
+ try{
+  migrateLegacyDataOnce();
+  updateUserInformation();
+  await initializeApp();
+ }catch(error){
+  console.error("Could not start Hemanth's Study Store",error);
+  // Keep the app available even if browser storage is restricted.
+  try{loadData();renderAll();loadQuiz();renderInterviewStats();}catch(renderError){console.error("Study Store initialization failed",renderError);}
+ }
+})();
+
+// Persist changes when the page is hidden, closed or refreshed.
+window.addEventListener("pagehide",function(){
+ if(autosaveTimer){clearTimeout(autosaveTimer);autosaveTimer=null;}
+ saveData();
+});
+document.addEventListener("visibilitychange",function(){
+ if(document.visibilityState==="hidden"){
+  if(autosaveTimer){clearTimeout(autosaveTimer);autosaveTimer=null;}
+  saveData();
+ }
+});
+window.addEventListener("beforeunload",function(){saveData();});
+
+</script>
+</body>
+</html>
