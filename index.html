@@ -1219,8 +1219,10 @@ async function refreshCloudFromRemote(){
   const row=await readCloudRecord();
   if(!row)return;
   const remoteStamp=Date.parse(row.updated_at)||0;
-  const localStamp=localSavedTimestamp();
-  if(remoteStamp>localStamp && remoteStamp>cloudLastSyncedAt){
+  // Compare with the last cloud version this device actually received.
+  // A local browser-save timestamp can be newer simply because the page
+  // autosaved or reopened; it must not block genuinely newer cloud data.
+  if(remoteStamp>cloudLastSyncedAt){
    cloudApplyingRemote=true;
    try{
     data=normalizeLearningData(row.payload);
