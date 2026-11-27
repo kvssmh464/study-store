@@ -1104,6 +1104,7 @@ async function syncCloudOnConnect(){
   }
  }
  cloudReady=true;
+ startCloudPolling();
  renderAll();
  loadQuiz();
  renderInterviewStats();
@@ -1200,6 +1201,45 @@ async function pushLatestDataToCloud(){
   if(cloudSaveQueued){cloudSaveQueued=false;setTimeout(pushLatestDataToCloud,150);}
  }
 }
+
+/* Cross-device refresh: keeps an already-open laptop/mobile tab up to date.
+   Newer local edits win while they are waiting to upload; newer cloud edits are restored. */
+let cloudPollTimer=null;
+let cloudRefreshRunning=false;
+async function refreshCloudFromRemote(){
+ if(!cloudReady||!cloudUser||cloudApplyingRemote||cloudSaveRunning||cloudSaveTimer||cloudRefreshRunning)return;
+ cloudRefreshRunning=true;
+ try{
+  const row=await readCloudRecord();
+  if(!row)return;
+  const remoteStamp=Date.parse(row.updated_at)||0;
+  const localStamp=localSavedTimestamp();
+  if(remoteStamp>localStamp && remoteStamp>cloudLastSyncedAt){
+   cloudApplyingRemote=true;
+   try{
+    data=normalizeLearningData(row.payload);
+    persistCloudSnapshotLocally(JSON.stringify(data),remoteStamp);
+    cloudLastSyncedAt=remoteStamp;
+   }finally{cloudApplyingRemote=false;}
+   renderAll();
+   loadQuiz();
+   renderInterviewStats();
+   setCloudStatus("Latest changes received from your other device · "+new Date(remoteStamp).toLocaleString(),true);
+  }
+ }catch(error){
+  console.warn("Cross-device refresh could not complete",error);
+ }finally{cloudRefreshRunning=false;}
+}
+function startCloudPolling(){
+ if(cloudPollTimer)clearInterval(cloudPollTimer);
+ cloudPollTimer=setInterval(()=>{
+  if(document.visibilityState==="visible")refreshCloudFromRemote();
+ },12000);
+}
+window.addEventListener("focus",()=>refreshCloudFromRemote());
+document.addEventListener("visibilitychange",()=>{
+ if(document.visibilityState==="visible")refreshCloudFromRemote();
+});
 
 function saveData(){
  let snapshot;
