@@ -1068,7 +1068,13 @@ async function createDailyCloudBackup(fallbackPayload){
  if(cleanupError)console.warn("Old cloud backup cleanup was skipped",cleanupError);
 }
 async function writeCloudRecord(payload, savedAt){
- await createDailyCloudBackup(payload);
+ // The main cloud record is the source of truth. A backup-table setup or
+ // cleanup problem must never block saving the user's current Study Store.
+ try{
+  await createDailyCloudBackup(payload);
+ }catch(backupError){
+  console.warn("Daily recovery snapshot was skipped; continuing with the main cloud save.",backupError);
+ }
  const stamp=new Date(Number(savedAt)||Date.now()).toISOString();
  const record={user_id:cloudUser.id,owner_email:AUTHORIZED_CLOUD_EMAIL,payload,updated_at:stamp};
  const {error}=await cloudClient.from(CLOUD_TABLE_NAME).upsert(record,{onConflict:"user_id"});
